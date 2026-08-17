@@ -277,3 +277,28 @@ async function loginSellerToSupabase(email, password) {
     return { success: false, message: err.message };
   }
 }
+async function addProductToSupabase(productData) {
+  if (!db) return { success: false, message: 'Supabase tidak tersedia.' };
+  try {
+    const { error } = await db.from('products').insert([
+      {
+        seller_id: productData.sellerId,
+        category_id: productData.category,
+        name: productData.name,
+        description: productData.description,
+        base_price: productData.basePrice,
+        variations: JSON.stringify(productData.variations),
+        emoji: productData.emoji,
+        discount: productData.discount,
+        is_featured: productData.isFeatured,
+        is_new: productData.isNew,
+        is_active: productData.isActive,
+        view_count: productData.viewCount
+      }
+    ]);
+    if (error) return { success: false, message: error.message };
+    return { success: true };
+  } catch (err) {
+    return { success: false, message: err.message };
+  }
+}

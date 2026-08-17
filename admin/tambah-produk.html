@@ -118,6 +118,8 @@
   <!-- Toast -->
   <div id="toast" style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--success-500);color:white;padding:12px 24px;border-radius:100px;font-weight:600;transition:all 0.3s ease;opacity:0;z-index:9999;">Tersimpan!</div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase-config.js"></script>
   <script src="../js/data.js"></script>
   <script>
     if(localStorage.getItem('adminLoggedIn') !== 'true') {
@@ -196,12 +198,19 @@
       }
     }
 
-    document.getElementById('productForm').addEventListener('submit', (e) => {
+    document.getElementById('productForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       
+      const submitBtn = document.querySelector('#productForm button[type="submit"]');
+      const origText = submitBtn.textContent;
+      submitBtn.textContent = '⏳ Menyimpan...';
+      submitBtn.disabled = true;
+
       const targetSellerId = role === 'super_admin' ? inputSeller.value : currentSellerId;
       if (!targetSellerId) {
         alert('Pilih toko pemilih produk terlebih dahulu!');
+        submitBtn.textContent = origText;
+        submitBtn.disabled = false;
         return;
       }
 
@@ -224,51 +233,65 @@
         }
       });
 
-      if (editId) {
-        const prod = getProductById(editId);
-        if (prod) {
-          prod.name = name;
-          prod.description = desc;
-          prod.category = category;
-          prod.basePrice = basePrice;
-          prod.discount = discount;
-          prod.isNew = isNew;
-          prod.isFeatured = isFeatured;
-          prod.emoji = emoji;
-          prod.variations = variations;
-          prod.sellerId = targetSellerId;
-          prod.updatedAt = new Date().toISOString().split('T')[0];
-          saveProductsToStorage();
+      const productData = {
+        sellerId: targetSellerId,
+        name: name,
+        category: category,
+        emoji: emoji,
+        basePrice: basePrice,
+        discount: discount,
+        description: desc,
+        variations: variations.length > 0 ? variations : [{ name: 'Standar (250g)', price: basePrice }],
+        isFeatured: isFeatured,
+        isNew: isNew,
+        isActive: true,
+        viewCount: 0
+      };
+
+      let saveResult;
+
+      if (typeof addProductToSupabase !== 'undefined') {
+        if (editId) {
+          saveResult = await updateProductToSupabase(editId, productData);
+        } else {
+          saveResult = await addProductToSupabase(productData);
         }
       } else {
-        const newProd = {
-          id: 'prod-' + Date.now(),
-          sellerId: targetSellerId,
-          name: name,
-          category: category,
-          emoji: emoji,
-          basePrice: basePrice,
-          discount: discount,
-          rating: 5.0,
-          reviewCount: 0,
-          description: desc,
-          variations: variations.length > 0 ? variations : [{ name: 'Standar (250g)', price: basePrice }],
-          isFeatured: isFeatured,
-          isNew: isNew,
-          isActive: true,
-          viewCount: 0,
-          createdAt: new Date().toISOString().split('T')[0],
-          updatedAt: new Date().toISOString().split('T')[0]
-        };
-        PRODUCTS.push(newProd);
-        saveProductsToStorage();
+        // Fallback ke localStorage jika supabase-config tidak termuat
+        saveResult = { success: true };
+      }
 
-        // Increment seller product count
-        const sellerObj = getSellerById(targetSellerId);
-        if (sellerObj) {
-          sellerObj.productCount = (sellerObj.productCount || 0) + 1;
-          saveSellersToStorage();
+      if (saveResult.success) {
+        if (editId) {
+          const prod = getProductById(editId);
+          if (prod) {
+            Object.assign(prod, productData);
+            prod.updatedAt = new Date().toISOString().split('T')[0];
+            saveProductsToStorage();
+          }
+        } else {
+          const newProd = {
+            id: 'prod-' + Date.now(),
+            ...productData,
+            rating: 5.0,
+            reviewCount: 0,
+            createdAt: new Date().toISOString().split('T')[0],
+            updatedAt: new Date().toISOString().split('T')[0]
+          };
+          PRODUCTS.push(newProd);
+          saveProductsToStorage();
+
+          const sellerObj = getSellerById(targetSellerId);
+          if (sellerObj) {
+            sellerObj.productCount = (sellerObj.productCount || 0) + 1;
+            saveSellersToStorage();
+          }
         }
+      } else {
+        alert('Gagal menyimpan ke Supabase: ' + saveResult.message);
+        submitBtn.textContent = origText;
+        submitBtn.disabled = false;
+        return;
       }
 
       // Show toast
