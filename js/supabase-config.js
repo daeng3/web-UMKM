@@ -206,7 +206,7 @@ async function registerSellerToSupabase(email, password, shopName, sellerName, w
       success: true,
       message: 'Pendaftaran berhasil! Silakan cek email Anda untuk verifikasi (jika diaktifkan), lalu silakan Login.'
     };
-  } catch (err) { {
+  } catch (err) {
     return { success: false, message: err.message };
   }
 }
