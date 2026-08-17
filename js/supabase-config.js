@@ -289,6 +289,7 @@ async function addProductToSupabase(productData) {
         base_price: productData.basePrice,
         variations: JSON.stringify(productData.variations),
         emoji: productData.emoji,
+        image_url: productData.image_url,
         discount: productData.discount,
         is_featured: productData.isFeatured,
         is_new: productData.isNew,
@@ -301,4 +302,77 @@ async function addProductToSupabase(productData) {
   } catch (err) {
     return { success: false, message: err.message };
   }
+}async function updateSellerToSupabase(sellerId, sellerData) {
+  if (!db) return { success: false, message: 'Supabase tidak tersedia.' };
+  try {
+    const { error } = await db.from('sellers').update({
+      name: sellerData.name,
+      shop_name: sellerData.shopName,
+      whatsapp: sellerData.whatsapp,
+      village: sellerData.village,
+      bio: sellerData.bio,
+      photo_url: sellerData.photoUrl,
+      avatar: sellerData.avatar
+    }).eq('id', sellerId);
+    
+    if (error) return { success: false, message: error.message };
+    return { success: true };
+  } catch (err) {
+    return { success: false, message: err.message };
+  }
+}
+
+/**
+ * Update produk di Supabase
+ */
+async function updateProductToSupabase(productId, productData) {
+  if (!db) return { success: false, message: 'Supabase tidak tersedia.' };
+  try {
+    const { error } = await db.from('products').update({
+      category_id: productData.category,
+      name: productData.name,
+      description: productData.description,
+      base_price: productData.basePrice,
+      variations: JSON.stringify(productData.variations),
+      emoji: productData.emoji,
+      image_url: productData.image_url,
+      discount: productData.discount,
+      is_featured: productData.isFeatured,
+      is_new: productData.isNew,
+      updated_at: new Date().toISOString()
+    }).eq('id', productId);
+    
+    if (error) return { success: false, message: error.message };
+    return { success: true };
+  } catch (err) {
+    return { success: false, message: err.message };
+  }
+}
+/**
+ * Middleware untuk mengecek sesi (Session Management)
+ */
+async function checkAuth() {
+  if (!db) return { authenticated: false };
+  
+  const { data, error } = await db.auth.getSession();
+  if (error || !data.session) {
+    return { authenticated: false };
+  }
+  
+  const { data: sellerData } = await db
+    .from('sellers')
+    .select('*')
+    .eq('user_id', data.session.user.id)
+    .single();
+
+  return { authenticated: true, session: data.session, seller: sellerData };
+}
+
+/**
+ * Logout pengguna
+ */
+async function logoutSeller() {
+  if (db) await db.auth.signOut();
+  localStorage.removeItem('adminSellerId');
+  localStorage.removeItem('adminLoggedIn');
 }

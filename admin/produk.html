@@ -69,14 +69,18 @@
     </div>
   </nav>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase-config.js"></script>
   <script src="../js/data.js"></script>
   <script>
-    if(localStorage.getItem('adminLoggedIn') !== 'true') {
-      window.location.href = 'login.html';
-    }
-
-    const sellerId = localStorage.getItem('adminSellerId') || 'bu-siti';
-    const role = localStorage.getItem('adminRole') || 'seller';
+    document.addEventListener('DOMContentLoaded', async () => {
+      const auth = await checkAuth();
+      if (!auth.authenticated) {
+        window.location.href = 'login.html';
+        return;
+      }
+      const sellerId = auth.seller ? auth.seller.id : null;
+      const role = 'seller'; // Simplification for production MVP
     
     let productToDelete = null;
 
@@ -176,6 +180,8 @@
 
     // Initial render
     renderProducts();
+      });
   </script>
 </body>
 </html>
+

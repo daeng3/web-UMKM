@@ -21,7 +21,8 @@
     
     <form id="profileForm" class="mt-6 mb-8">
       <div class="form-group text-center">
-        <button type="button" class="btn btn-outline btn-sm" onclick="alert('Demo: Ubah foto belum tersedia')">Ubah Foto Profil</button>
+        <input type="file" id="profileImageInput" accept="image/*" style="display: none;" onchange="handleProfileImageUpload(event)">
+        <button type="button" class="btn btn-outline btn-sm" onclick="document.getElementById('profileImageInput').click()">Ubah Foto Profil</button>
       </div>
 
       <div class="form-group">
@@ -75,6 +76,8 @@
     </div>
   </nav>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase-config.js"></script>
   <script src="../js/data.js"></script>
   <script>
     if(localStorage.getItem('adminLoggedIn') !== 'true') {
@@ -83,9 +86,14 @@
 
     const sellerId = localStorage.getItem('adminSellerId') || 'bu-siti';
     const seller = getSellerById(sellerId);
+    let uploadedPhotoUrl = seller ? seller.photo : null;
 
     if(seller) {
-      document.getElementById('profileAvatar').textContent = seller.avatar;
+      if (seller.photo) {
+        document.getElementById('profileAvatar').innerHTML = `<img src="${seller.photo}" alt="Avatar" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
+      } else {
+        document.getElementById('profileAvatar').textContent = seller.avatar;
+      }
       document.getElementById('inputFullName').value = seller.name;
       document.getElementById('inputShopName').value = seller.shopName;
       document.getElementById('inputWa').value = seller.whatsapp;
@@ -93,8 +101,67 @@
       document.getElementById('inputBio').value = seller.bio;
     }
 
-    function saveProfile() {
-      // Simulate saving
+    async function handleProfileImageUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const btn = document.querySelector('.btn-outline');
+      const originalText = btn.textContent;
+      btn.textContent = '⏳ Mengunggah...';
+      btn.disabled = true;
+
+      const res = await uploadImageToSupabase(file, 'avatars');
+      btn.textContent = originalText;
+      btn.disabled = false;
+
+      if (res.success) {
+        uploadedPhotoUrl = res.url;
+        document.getElementById('profileAvatar').innerHTML = `<img src="${res.url}" alt="Avatar" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
+      } else {
+        alert('Gagal mengunggah foto: ' + res.message);
+      }
+    }
+
+    async function saveProfile() {
+      const btn = document.querySelector('.btn-primary');
+      const origText = btn.textContent;
+      btn.textContent = '⏳ Menyimpan...';
+      btn.disabled = true;
+
+      const updatedData = {
+        name: document.getElementById('inputFullName').value,
+        shopName: document.getElementById('inputShopName').value,
+        whatsapp: document.getElementById('inputWa').value,
+        village: document.getElementById('inputAddress').value,
+        bio: document.getElementById('inputBio').value,
+        photoUrl: uploadedPhotoUrl,
+        avatar: document.getElementById('profileAvatar').textContent.length <= 2 ? document.getElementById('profileAvatar').textContent : '👩‍🍳'
+      };
+
+      if (typeof updateSellerToSupabase !== 'undefined') {
+        const res = await updateSellerToSupabase(sellerId, updatedData);
+        if (!res.success) {
+          alert('Gagal menyimpan ke Supabase: ' + res.message);
+          btn.textContent = origText;
+          btn.disabled = false;
+          return;
+        }
+      }
+
+      // Update data lokal
+      if (seller) {
+        seller.name = updatedData.name;
+        seller.shopName = updatedData.shopName;
+        seller.whatsapp = updatedData.whatsapp;
+        seller.village = updatedData.village;
+        seller.bio = updatedData.bio;
+        seller.photo = updatedData.photoUrl;
+        saveSellersToStorage();
+      }
+
+      btn.textContent = origText;
+      btn.disabled = false;
+
       const toast = document.getElementById('toast');
       toast.style.transform = 'translateX(-50%) translateY(0)';
       toast.style.opacity = '1';
@@ -110,6 +177,8 @@
       localStorage.removeItem('adminSellerId');
       window.location.href = 'login.html';
     }
+      });
   </script>
 </body>
 </html>
+
