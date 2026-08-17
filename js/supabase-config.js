@@ -188,6 +188,7 @@ async function registerSellerToSupabase(email, password, shopName, sellerName, w
       email: email,
       password: password,
       options: {
+        emailRedirectTo: window.location.origin + '/login.html',
         data: {
           shop_name: shopName,
           name: sellerName
