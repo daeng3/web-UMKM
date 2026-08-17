@@ -293,14 +293,18 @@ function renderProductCard(product) {
     priceHtml = `<span class="price">${formatRupiah(product.basePrice)}</span>`;
   }
 
+  const imageMediaHtml = product.imageUrl 
+    ? `<img src="${escapeHTML(product.imageUrl)}" alt="${escapeHTML(product.name)}" loading="lazy">` 
+    : `<div class="product-card__image-placeholder">${escapeHTML(product.emoji || '📦')}</div>`;
+
   return `
     <div class="product-card">
       <a href="detail-produk.html?id=${encodeURIComponent(product.id)}" class="product-card__image">
-        <div class="product-card__image-placeholder">${escapeHTML(product.emoji || '📦')}</div>
+        ${imageMediaHtml}
         ${badges ? `<div class="product-card__badges">${badges}</div>` : ''}
       </a>
       <div class="product-card__body">
-        <a href="penjual.html?id=${encodeURIComponent(seller.id)}" class="product-card__seller">${escapeHTML(seller.shopName)}</a>
+        <a href="penjual.html?id=${encodeURIComponent(seller ? seller.id : product.sellerId)}" class="product-card__seller">${escapeHTML(seller ? seller.shopName : 'Penjual')}</a>
         <h3 class="product-card__name">
           <a href="detail-produk.html?id=${encodeURIComponent(product.id)}">${escapeHTML(product.name)}</a>
         </h3>
@@ -317,19 +321,23 @@ function renderProductCard(product) {
 }
 
 function renderSellerCard(seller) {
+  const avatarMediaHtml = seller.photoUrl 
+    ? `<img src="${escapeHTML(seller.photoUrl)}" alt="${escapeHTML(seller.name)}" loading="lazy">` 
+    : (seller.avatar || '👩‍🍳');
+
   return `
     <div class="seller-card">
-      <div class="seller-card__avatar">${escapeHTML(seller.avatar || '👩‍🍳')}</div>
+      <div class="seller-card__avatar">${avatarMediaHtml}</div>
       <h3 class="seller-card__name">${escapeHTML(seller.name)}</h3>
       <p class="seller-card__shop">${escapeHTML(seller.shopName)}</p>
       <p class="seller-card__bio">${escapeHTML(seller.bio)}</p>
       <div class="seller-card__meta">
         <div class="seller-card__meta-item">
-          <span class="meta-value">${seller.productCount}</span>
+          <span class="meta-value">${seller.productCount || 0}</span>
           <span class="meta-label">Produk</span>
         </div>
         <div class="seller-card__meta-item">
-          <span class="meta-value">${escapeHTML(seller.village.split(',')[0])}</span>
+          <span class="meta-value">${escapeHTML((seller.village || '').split(',')[0])}</span>
           <span class="meta-label">Lokasi</span>
         </div>
       </div>

@@ -112,6 +112,7 @@ async function getSellersFromSupabase() {
       name: s.name,
       shopName: s.shop_name,
       avatar: s.avatar || '👩‍🍳',
+      photoUrl: s.photo_url,
       bio: s.bio,
       whatsapp: s.whatsapp,
       village: s.village,
@@ -120,5 +121,57 @@ async function getSellersFromSupabase() {
     }));
   } catch (e) {
     return typeof SELLERS !== 'undefined' ? SELLERS : [];
+  }
+}
+
+/**
+ * Upload gambar ke Supabase Storage (Bucket: 'products' atau 'avatars')
+ * @param {File} file File gambar dari input type="file"
+ * @param {string} bucketName 'products' atau 'avatars'
+ * @returns {Promise<{success: boolean, url: string, message?: string}>}
+ */
+async function uploadImageToSupabase(file, bucketName = 'products') {
+  if (!db) return { success: false, message: 'Supabase client belum dikonfigurasi.' };
+  if (!file) return { success: false, message: 'Tidak ada file yang dipilih.' };
+
+  // Validasi tipe file gambar
+  if (!file.type.startsWith('image/')) {
+    return { success: false, message: 'File harus berupa gambar (JPG, PNG, WebP).' };
+  }
+
+  // Validasi ukuran file (Max 5MB)
+  if (file.size > 5 * 1024 * 1024) {
+    return { success: false, message: 'Ukuran gambar maksimal 5MB.' };
+  }
+
+  try {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
+
+    const { data, error } = await db.storage
+      .from(bucketName)
+      .upload(fileName, file, {
+        cacheControl: '3600',
+        upsert: false
+      });
+
+    if (error) {
+      console.error('Upload Storage Error:', error);
+      return { success: false, message: error.message };
+    }
+
+    // Ambil Public URL gambar
+    const { data: publicUrlData } = db.storage
+      .from(bucketName)
+      .getPublicUrl(fileName);
+
+    return {
+      success: true,
+      url: publicUrlData.publicUrl,
+      fileName: fileName
+    };
+  } catch (err) {
+    console.error('Upload Exception:', err);
+    return { success: false, message: err.message };
   }
 }
