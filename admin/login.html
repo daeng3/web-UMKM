@@ -3,47 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Login - Panel Penjual & Admin Cemilan Ciamis</title>
+  <title>Login & Pendaftaran - Panel Penjual Cemilan Ciamis</title>
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/components.css">
   <link rel="stylesheet" href="../css/admin.css">
   <style>
-    .password-wrapper {
-      position: relative;
-      display: flex;
-      align-items: center;
-    }
-    .password-wrapper .form-input {
-      padding-right: 44px;
-      width: 100%;
-    }
-    .btn-toggle-password {
-      position: absolute;
-      right: 12px;
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 1.2rem;
-      color: var(--text-muted);
-      padding: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .btn-toggle-password:hover {
-      color: var(--primary-600);
-    }
-    .notice-box {
-      background: var(--warning-50);
-      border: 1px solid var(--warning-500);
-      border-radius: var(--radius-lg);
-      padding: var(--space-4);
-      margin-bottom: var(--space-5);
-      text-align: left;
-      color: #854d0e;
-      font-size: var(--text-xs);
-      line-height: 1.5;
-    }
+    .password-wrapper { position: relative; display: flex; align-items: center; }
+    .password-wrapper .form-input { padding-right: 44px; width: 100%; }
+    .btn-toggle-password { position: absolute; right: 12px; background: none; border: none; cursor: pointer; font-size: 1.2rem; color: var(--text-muted); padding: 0; }
+    .auth-tabs { display: flex; background: var(--neutral-100); padding: 4px; border-radius: var(--radius-lg); margin-bottom: var(--space-5); }
+    .auth-tab-btn { flex: 1; padding: var(--space-2) var(--space-3); border: none; background: transparent; font-family: var(--font-heading); font-size: var(--text-sm); font-weight: 600; color: var(--text-secondary); cursor: pointer; border-radius: var(--radius-md); transition: all var(--transition-fast); }
+    .auth-tab-btn.active { background: var(--bg-surface); color: var(--primary-700); box-shadow: var(--shadow-sm); }
+    .notice-box { background: var(--warning-50); border: 1px solid var(--warning-500); border-radius: var(--radius-lg); padding: var(--space-4); margin-bottom: var(--space-5); text-align: left; color: #854d0e; font-size: var(--text-xs); line-height: 1.5; }
+    .success-box { background: var(--success-50); border: 1px solid var(--success-500); border-radius: var(--radius-lg); padding: var(--space-4); margin-bottom: var(--space-5); text-align: left; color: var(--success-600); font-size: var(--text-sm); line-height: 1.5; }
   </style>
 </head>
 <body class="admin-body">
@@ -54,15 +26,15 @@
         <div style="background: var(--gradient-primary); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem;">🛍️</div>
       </div>
       
-      <!-- FORM LOGIN UTAMA -->
+      <!-- 1. FORM LOGIN -->
       <div id="loginSection">
-        <h2>Panel Penjual & Admin</h2>
+        <h2>Panel Super Admin</h2>
         <p>Masuk dengan akun Anda untuk mengelola platform</p>
 
         <form id="loginForm" style="text-align: left;">
           <div class="form-group">
             <label class="form-label" for="usernameInput">Username</label>
-            <input type="text" class="form-input" id="usernameInput" placeholder="Contoh: busiti atau superadmin" required autocomplete="username">
+            <input type="text" class="form-input" id="usernameInput" placeholder="Contoh: superadmin" required autocomplete="username">
           </div>
 
           <div class="form-group mt-4">
@@ -80,75 +52,33 @@
             <div style="font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
               <span>💡</span> Akun Demo Tersedia:
             </div>
-            <div>• <b>superadmin</b> / <code>admin123</code> (Admin Paguyuban / Super Admin)</div>
-            <div>• <b>busiti</b> / <code>siti123</code> (Keripik Bu Siti)</div>
-            <div>• <b>buani</b> / <code>ani123</code> (Kue Ani Homemade)</div>
-            <div>• <b>burina</b> / <code>rina123</code> (Dodol Bu Rina)</div>
+            <div>• <b>superadmin</b> / <code>admin123</code> (Admin Paguyuban)</div>
           </div>
         </form>
       </div>
 
-      <!-- FORM WAJIB GANTI SANDI SEMENTARA (FORCE PASSWORD CHANGE) -->
-      <div id="forcePassSection" class="hidden">
-        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">⚠️</div>
-        <h2 style="color: var(--danger-600); font-size: var(--text-xl);">Wajib Ganti Kata Sandi</h2>
-        <p style="margin-bottom: var(--space-4);">Anda masih menggunakan kata sandi sementara dari Admin. Demi keamanan toko Anda, wajib membuat sandi baru sebelum masuk ke dasbor.</p>
-        
-        <div class="notice-box">
-          <strong>🔒 Syarat Sandi Baru:</strong><br>
-          • Minimal 6 karakter<br>
-          • Tidak boleh sama dengan sandi sementara (<code id="tempPassLabel"></code>)
-        </div>
 
-        <form id="forcePassForm" style="text-align: left;">
-          <div class="form-group">
-            <label class="form-label" for="newPassInput">Kata Sandi Baru</label>
-            <input type="password" class="form-input" id="newPassInput" placeholder="Minimal 6 karakter" required minlength="6">
-          </div>
-          <div class="form-group mt-4">
-            <label class="form-label" for="confirmPassInput">Ulangi Kata Sandi Baru</label>
-            <input type="password" class="form-input" id="confirmPassInput" placeholder="Ketik ulang sandi baru" required minlength="6">
-          </div>
-
-          <button type="submit" class="btn btn-primary btn-block btn-lg mt-6">Simpan Sandi & Masuk Panel</button>
-          <button type="button" id="btnCancelForcePass" class="btn btn-ghost btn-block mt-3">Batal (Kembali Login)</button>
-        </form>
-      </div>
 
       <p id="errorMessage" class="form-error hidden mt-4" style="text-align: center;"></p>
+      <div id="successMessage" class="success-box hidden mt-4" style="text-align: center;"></div>
     </div>
   </div>
 
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase-config.js"></script>
   <script src="../js/data.js"></script>
   <script>
-    const loginSection = document.getElementById('loginSection');
-    const forcePassSection = document.getElementById('forcePassSection');
     const loginForm = document.getElementById('loginForm');
-    const forcePassForm = document.getElementById('forcePassForm');
     
     const usernameInput = document.getElementById('usernameInput');
     const passwordInput = document.getElementById('passwordInput');
     const btnTogglePassword = document.getElementById('btnTogglePassword');
     
-    const newPassInput = document.getElementById('newPassInput');
-    const confirmPassInput = document.getElementById('confirmPassInput');
-    const tempPassLabel = document.getElementById('tempPassLabel');
-    const btnCancelForcePass = document.getElementById('btnCancelForcePass');
-    
     const errorMessage = document.getElementById('errorMessage');
+    const successMessage = document.getElementById('successMessage');
 
-    let pendingAuthResult = null;
-
-    // Cek apakah admin sudah login sebelumnya (dilindungi try-catch)
-    try {
-      if (localStorage.getItem('adminLoggedIn') === 'true') {
-        window.location.href = 'dashboard.html';
-      }
-    } catch (e) {
-      console.warn('LocalStorage tidak dapat diakses:', e);
-    }
-
-    // Toggle lihat/sembunyikan password
+    // Toggle Password Visibility
     btnTogglePassword.addEventListener('click', () => {
       if (passwordInput.type === 'password') {
         passwordInput.type = 'text';
@@ -159,71 +89,33 @@
       }
     });
 
-    // Form Submit Handler
+    // Submit Handler Login
     loginForm.addEventListener('submit', (e) => {
       e.preventDefault();
       hideError();
-
-      const username = usernameInput.value;
+      const username = usernameInput.value.trim();
       const password = passwordInput.value;
 
+      const btn = document.getElementById('btnLogin');
+      const originalText = btn ? btn.textContent : 'Masuk ke Panel';
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = '⏳ Memproses...';
+      }
+
+      // Offline Admin Login
       const authResult = authenticateSeller(username, password);
+      
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = originalText;
+      }
 
       if (authResult.success) {
-        // Cek apakah wajib ganti sandi
-        if (authResult.seller && authResult.seller.mustChangePassword === true) {
-          pendingAuthResult = authResult;
-          tempPassLabel.textContent = password;
-          loginSection.classList.add('hidden');
-          forcePassSection.classList.remove('hidden');
-          newPassInput.value = '';
-          confirmPassInput.value = '';
-          newPassInput.focus();
-        } else {
-          completeLogin(authResult);
-        }
+        completeLogin(authResult);
       } else {
         showError(authResult.message || 'Username atau password salah.');
-        passwordInput.value = '';
-        passwordInput.focus();
       }
-    });
-
-    // Handle submit Force Password Change
-    forcePassForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      hideError();
-
-      const newPass = newPassInput.value.trim();
-      const confirmPass = confirmPassInput.value.trim();
-
-      if (newPass.length < 6) {
-        showError('Kata sandi baru minimal 6 karakter!');
-        return;
-      }
-      if (newPass !== confirmPass) {
-        showError('Ulangi kata sandi tidak cocok!');
-        return;
-      }
-      if (newPass === pendingAuthResult.seller.password) {
-        showError('Kata sandi baru tidak boleh sama dengan kata sandi sementara!');
-        return;
-      }
-
-      const updateRes = updateSellerPassword(pendingAuthResult.seller.id, newPass);
-      if (updateRes.success) {
-        completeLogin(pendingAuthResult);
-      } else {
-        showError(updateRes.message || 'Gagal memperbarui password.');
-      }
-    });
-
-    btnCancelForcePass.addEventListener('click', () => {
-      forcePassSection.classList.add('hidden');
-      loginSection.classList.remove('hidden');
-      pendingAuthResult = null;
-      hideError();
-      passwordInput.value = '';
     });
 
     function completeLogin(authResult) {
@@ -233,7 +125,7 @@
         localStorage.setItem('adminRole', authResult.role || 'seller');
         window.location.href = 'dashboard.html';
       } catch (err) {
-        showError('Gagal menyimpan sesi browser. Pastikan peramban tidak memblokir cookie/storage.');
+        showError('Gagal menyimpan sesi browser.');
       }
     }
 
@@ -241,10 +133,12 @@
       errorMessage.textContent = msg;
       errorMessage.classList.remove('hidden');
     }
-
-    function hideError() {
-      errorMessage.classList.add('hidden');
+    function hideError() { errorMessage.classList.add('hidden'); }
+    function showSuccess(msg) {
+      successMessage.textContent = msg;
+      successMessage.classList.remove('hidden');
     }
+    function hideSuccess() { successMessage.classList.add('hidden'); }
   </script>
 </body>
 </html>

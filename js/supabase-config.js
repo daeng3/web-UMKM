@@ -219,12 +219,59 @@ async function registerSellerToSupabase(email, password, shopName, sellerName, w
       ]);
 
     if (dbError) {
-      console.warn('Pendaftaran Auth berhasil, namun insert tabel sellers dibatasi RLS:', dbError);
+      console.error('Insert tabel sellers error:', dbError);
+      return { 
+        success: false, 
+        message: `Auth berhasil, tapi gagal simpan profil: ${dbError.message}` 
+      };
     }
 
     return {
       success: true,
-      message: 'Pendaftaran berhasil! Akun Anda telah tersimpan di Supabase Auth.'
+      message: 'Pendaftaran berhasil! Akun Anda telah tersimpan di Supabase.'
+    };
+  } catch (err) {
+    return { success: false, message: err.message };
+  }
+}
+
+/**
+ * Login akun penjual ke Supabase Auth
+ */
+async function loginSellerToSupabase(email, password) {
+  if (!db) return { success: false, message: 'Supabase client belum dikonfigurasi.' };
+
+  try {
+    const { data: authData, error: authError } = await db.auth.signInWithPassword({
+      email: email,
+      password: password
+    });
+
+    if (authError) {
+      return { success: false, message: authError.message };
+    }
+
+    const userId = authData.user.id;
+
+    // Ambil data seller dari tabel public.sellers
+    const { data: sellerData, error: dbError } = await db
+      .from('sellers')
+      .select('*')
+      .eq('user_id', userId)
+      .single();
+
+    if (dbError) {
+      console.warn('Gagal mengambil profil seller:', dbError);
+      return { 
+        success: false, 
+        message: 'Login Auth berhasil, tetapi profil seller tidak ditemukan di database.' 
+      };
+    }
+
+    return {
+      success: true,
+      message: 'Login berhasil.',
+      seller: sellerData
     };
   } catch (err) {
     return { success: false, message: err.message };

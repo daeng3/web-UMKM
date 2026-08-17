@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Login & Pendaftaran - Penjual Cemilan Ciamis</title>
+  <link rel="stylesheet" href="./css/style.css">
+  <link rel="stylesheet" href="./css/components.css">
+  <link rel="stylesheet" href="./css/admin.css">
+  <style>
+    .password-wrapper { position: relative; display: flex; align-items: center; }
+    .password-wrapper .form-input { padding-right: 44px; width: 100%; }
+    .btn-toggle-password { position: absolute; right: 12px; background: none; border: none; cursor: pointer; font-size: 1.2rem; color: var(--text-muted); padding: 0; }
+    .auth-tabs { display: flex; background: var(--neutral-100); padding: 4px; border-radius: var(--radius-lg); margin-bottom: var(--space-5); }
+    .auth-tab-btn { flex: 1; padding: var(--space-2) var(--space-3); border: none; background: transparent; font-family: var(--font-heading); font-size: var(--text-sm); font-weight: 600; color: var(--text-secondary); cursor: pointer; border-radius: var(--radius-md); transition: all var(--transition-fast); }
+    .auth-tab-btn.active { background: var(--bg-surface); color: var(--primary-700); box-shadow: var(--shadow-sm); }
+    .notice-box { background: var(--warning-50); border: 1px solid var(--warning-500); border-radius: var(--radius-lg); padding: var(--space-4); margin-bottom: var(--space-5); text-align: left; color: #854d0e; font-size: var(--text-xs); line-height: 1.5; }
+    .success-box { background: var(--success-50); border: 1px solid var(--success-500); border-radius: var(--radius-lg); padding: var(--space-4); margin-bottom: var(--space-5); text-align: left; color: var(--success-600); font-size: var(--text-sm); line-height: 1.5; }
+  </style>
+</head>
+<body class="admin-body">
+
+  <div class="login-container">
+    <div class="login-card">
+      <div class="login-card__logo">
+        <div style="background: var(--gradient-primary); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem;">🛍️</div>
+      </div>
+      
+      <!-- NAVIGASI TAB MODES -->
+      <div class="auth-tabs" id="authTabs">
+        <button class="auth-tab-btn active" id="tabLoginBtn" onclick="switchAuthTab('login')">🔑 Masuk</button>
+        <button class="auth-tab-btn" id="tabRegisterBtn" onclick="switchAuthTab('register')">✨ Daftar Toko Baru</button>
+      </div>
+
+      <!-- 1. FORM LOGIN -->
+      <div id="loginSection">
+        <h2>Panel Penjual</h2>
+        <p>Masuk dengan akun Anda untuk mengelola toko</p>
+
+        <form id="loginForm" style="text-align: left;">
+          <div class="form-group">
+            <label class="form-label" for="usernameInput">Email Terdaftar</label>
+            <input type="email" class="form-input" id="usernameInput" placeholder="Contoh: toko@gmail.com" required autocomplete="username">
+          </div>
+
+          <div class="form-group mt-4">
+            <label class="form-label" for="passwordInput">Password</label>
+            <div class="password-wrapper">
+              <input type="password" class="form-input" id="passwordInput" placeholder="Masukkan password..." required autocomplete="current-password">
+              <button type="button" class="btn-toggle-password" id="btnTogglePassword" title="Tampilkan/Sembunyikan Password" aria-label="Toggle Password">👁️</button>
+            </div>
+          </div>
+
+          <button type="submit" id="btnLogin" class="btn btn-primary btn-block btn-lg mt-6">Masuk ke Panel</button>
+        </form>
+      </div>
+
+      <!-- 2. FORM PENDAFTARAN TOKO BARU (REGISTER) -->
+      <div id="registerSection" class="hidden">
+        <h2>Pendaftaran Toko UMKM</h2>
+        <p>Buat akun toko baru untuk mulai berjualan makanan ringan</p>
+
+        <form id="registerForm" style="text-align: left;">
+          <div class="form-group">
+            <label class="form-label" for="regNameInput">Nama Lengkap Penjual</label>
+            <input type="text" class="form-input" id="regNameInput" placeholder="Contoh: Ibu Cicih Sulaeman" required>
+          </div>
+
+          <div class="form-group mt-3">
+            <label class="form-label" for="regShopInput">Nama Toko / Usaha</label>
+            <input type="text" class="form-input" id="regShopInput" placeholder="Contoh: Kerupuk Cicih Cikoneng" required>
+          </div>
+
+          <div class="form-group mt-3">
+            <label class="form-label" for="regEmailInput">Email Aktif</label>
+            <input type="email" class="form-input" id="regEmailInput" placeholder="Contoh: cicih@gmail.com" required>
+          </div>
+
+          <div class="form-group mt-3">
+            <label class="form-label" for="regWaInput">No. WhatsApp Toko</label>
+            <input type="tel" class="form-input" id="regWaInput" placeholder="Contoh: 6281234567890" required>
+          </div>
+
+          <div class="form-group mt-3">
+            <label class="form-label" for="regPassInput">Kata Sandi (Password)</label>
+            <input type="password" class="form-input" id="regPassInput" placeholder="Minimal 6 karakter" required minlength="6">
+          </div>
+
+          <button type="submit" id="btnRegister" class="btn btn-primary btn-block btn-lg mt-6">✨ Daftar Akun Toko Supabase</button>
+        </form>
+      </div>
+
+      <!-- 3. FORM WAJIB GANTI SANDI -->
+      <div id="forcePassSection" class="hidden">
+        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">⚠️</div>
+        <h2 style="color: var(--danger-600); font-size: var(--text-xl);">Wajib Ganti Kata Sandi</h2>
+        <p style="margin-bottom: var(--space-4);">Anda masih menggunakan kata sandi sementara. Buat sandi baru sebelum masuk dasbor.</p>
+        
+        <form id="forcePassForm" style="text-align: left;">
+          <div class="form-group">
+            <label class="form-label" for="newPassInput">Kata Sandi Baru</label>
+            <input type="password" class="form-input" id="newPassInput" placeholder="Minimal 6 karakter" required minlength="6">
+          </div>
+          <div class="form-group mt-4">
+            <label class="form-label" for="confirmPassInput">Ulangi Kata Sandi Baru</label>
+            <input type="password" class="form-input" id="confirmPassInput" placeholder="Ketik ulang sandi baru" required minlength="6">
+          </div>
+          <button type="submit" class="btn btn-primary btn-block btn-lg mt-6">Simpan Sandi & Masuk Panel</button>
+        </form>
+      </div>
+
+      <p id="errorMessage" class="form-error hidden mt-4" style="text-align: center;"></p>
+      <div id="successMessage" class="success-box hidden mt-4" style="text-align: center;"></div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./js/supabase-config.js"></script>
+  <script src="./js/data.js"></script>
+  <script>
+    const loginSection = document.getElementById('loginSection');
+    const registerSection = document.getElementById('registerSection');
+    const forcePassSection = document.getElementById('forcePassSection');
+    const authTabs = document.getElementById('authTabs');
+
+    const tabLoginBtn = document.getElementById('tabLoginBtn');
+    const tabRegisterBtn = document.getElementById('tabRegisterBtn');
+
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    
+    const usernameInput = document.getElementById('usernameInput');
+    const passwordInput = document.getElementById('passwordInput');
+    const btnTogglePassword = document.getElementById('btnTogglePassword');
+    
+    const errorMessage = document.getElementById('errorMessage');
+    const successMessage = document.getElementById('successMessage');
+
+    // Switch Tab Mode (Login vs Register)
+    function switchAuthTab(mode) {
+      hideError();
+      hideSuccess();
+      if (mode === 'login') {
+        loginSection.classList.remove('hidden');
+        registerSection.classList.add('hidden');
+        tabLoginBtn.classList.add('active');
+        tabRegisterBtn.classList.remove('active');
+      } else {
+        loginSection.classList.add('hidden');
+        registerSection.classList.remove('hidden');
+        tabLoginBtn.classList.remove('active');
+        tabRegisterBtn.classList.add('active');
+      }
+    }
+
+    // Toggle Password Visibility
+    btnTogglePassword.addEventListener('click', () => {
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        btnTogglePassword.textContent = '🙈';
+      } else {
+        passwordInput.type = 'password';
+        btnTogglePassword.textContent = '👁️';
+      }
+    });
+
+    // Submit Handler Login
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideError();
+      const email = usernameInput.value.trim();
+      const password = passwordInput.value;
+
+      const btn = document.getElementById('btnLogin');
+      const originalText = btn ? btn.textContent : 'Masuk ke Panel';
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = '⏳ Memproses...';
+      }
+
+      const authResult = await loginSellerToSupabase(email, password);
+      
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = originalText;
+      }
+
+      if (authResult.success) {
+        completeLogin(authResult);
+      } else {
+        showError(authResult.message || 'Email atau password salah.');
+      }
+    });
+
+    // Submit Handler Registration (Supabase Real Account Creation)
+    registerForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideError();
+      hideSuccess();
+
+      const btn = document.getElementById('btnRegister');
+      btn.disabled = true;
+      btn.textContent = '⏳ Memproses Pendaftaran...';
+
+      const sellerName = document.getElementById('regNameInput').value.trim();
+      const shopName = document.getElementById('regShopInput').value.trim();
+      const email = document.getElementById('regEmailInput').value.trim();
+      const whatsapp = document.getElementById('regWaInput').value.trim();
+      const password = document.getElementById('regPassInput').value.trim();
+
+      const res = await registerSellerToSupabase(email, password, shopName, sellerName, whatsapp);
+      btn.disabled = false;
+      btn.textContent = '✨ Daftar Akun Toko Supabase';
+
+      if (res.success) {
+        showSuccess(`🎉 ${res.message} Akun toko "${shopName}" berhasil didaftarkan di Supabase!`);
+        registerForm.reset();
+        setTimeout(() => switchAuthTab('login'), 2500);
+      } else {
+        showError('Gagal Mendaftar: ' + res.message);
+      }
+    });
+
+    function completeLogin(authResult) {
+      try {
+        localStorage.setItem('adminLoggedIn', 'true');
+        localStorage.setItem('adminSellerId', authResult.seller.id);
+        localStorage.setItem('adminRole', authResult.role || 'seller');
+        window.location.href = 'admin/dashboard.html';
+      } catch (err) {
+        showError('Gagal menyimpan sesi browser.');
+      }
+    }
+
+    function showError(msg) {
+      errorMessage.textContent = msg;
+      errorMessage.classList.remove('hidden');
+    }
+    function hideError() { errorMessage.classList.add('hidden'); }
+    function showSuccess(msg) {
+      successMessage.textContent = msg;
+      successMessage.classList.remove('hidden');
+    }
+    function hideSuccess() { successMessage.classList.add('hidden'); }
+  </script>
+</body>
+</html>
