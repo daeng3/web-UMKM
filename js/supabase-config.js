@@ -200,38 +200,13 @@ async function registerSellerToSupabase(email, password, shopName, sellerName, w
       return { success: false, message: authError.message };
     }
 
-    const userId = authData.user ? authData.user.id : null;
-    const sellerId = 'seller-' + Date.now();
-
-    // 2. Insert profil penjual ke tabel public.sellers
-    const { error: dbError } = await db
-      .from('sellers')
-      .insert([
-        {
-          id: sellerId,
-          user_id: userId,
-          name: sellerName,
-          shop_name: shopName,
-          whatsapp: whatsapp || '6281234567890',
-          avatar: '👩‍🍳',
-          village: 'Desa Cikoneng, Ciamis',
-          bio: 'Penjual UMKM Cemilan Ciamis.'
-        }
-      ]);
-
-    if (dbError) {
-      console.error('Insert tabel sellers error:', dbError);
-      return { 
-        success: false, 
-        message: `Auth berhasil, tapi gagal simpan profil: ${dbError.message}` 
-      };
-    }
-
+    // Berhasil mendaftar. Pembuatan profil (tabel sellers) akan dilakukan
+    // secara otomatis saat user login pertama kali agar tidak terblokir RLS.
     return {
       success: true,
-      message: 'Pendaftaran berhasil! Akun Anda telah tersimpan di Supabase.'
+      message: 'Pendaftaran berhasil! Silakan cek email Anda untuk verifikasi (jika diaktifkan), lalu silakan Login.'
     };
-  } catch (err) {
+  } catch (err) { {
     return { success: false, message: err.message };
   }
 }
@@ -261,11 +236,35 @@ async function loginSellerToSupabase(email, password) {
       .eq('user_id', userId)
       .single();
 
-    if (dbError) {
-      console.warn('Gagal mengambil profil seller:', dbError);
-      return { 
-        success: false, 
-        message: 'Login Auth berhasil, tetapi profil seller tidak ditemukan di database.' 
+    if (dbError || !sellerData) {
+      console.warn('Profil seller belum ada, membuat otomatis...', dbError);
+      
+      const sellerId = 'seller-' + Date.now();
+      const meta = authData.user.user_metadata || {};
+      const newSeller = {
+        id: sellerId,
+        user_id: userId,
+        name: meta.name || 'Penjual Baru',
+        shop_name: meta.shop_name || 'Toko Baru',
+        whatsapp: '6281234567890',
+        avatar: '👩‍🍳',
+        village: 'Desa Cikoneng, Ciamis',
+        bio: 'Penjual UMKM Cemilan Ciamis.'
+      };
+
+      const { error: insertErr } = await db.from('sellers').insert([newSeller]);
+      
+      if (insertErr) {
+        return { 
+          success: false, 
+          message: `Login berhasil, tapi gagal membuat profil otomatis: ${insertErr.message}` 
+        };
+      }
+
+      return {
+        success: true,
+        message: 'Login berhasil dan profil otomatis dibuat.',
+        seller: newSeller
       };
     }
 
@@ -377,3 +376,4 @@ async function logoutSeller() {
   localStorage.removeItem('adminSellerId');
   localStorage.removeItem('adminLoggedIn');
 }
+
