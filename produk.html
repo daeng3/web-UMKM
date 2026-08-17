@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Katalog Produk — Cemilan Ciamis</title>
+  <meta name="description" content="Katalog lengkap produk camilan khas Ciamis. Cari keripik singkong, kue kering, dodol, sale pisang, dan makanan ringan murah langsung dari pengrajin UMKM.">
+  <meta name="keywords" content="katalog cemilan ciamis, beli cemilan ciamis, keripik khas ciamis, sale pisang ciamis, kue tradisional">
+  <link rel="canonical" href="https://cemilanciamis.id/produk.html">
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="Katalog Produk — Cemilan Ciamis">
+  <meta property="og:description" content="Katalog lengkap camilan tradisional khas Ciamis murah dan enak langsung dari pengrajin.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://cemilanciamis.id/produk.html">
+  <meta property="og:image" content="assets/images/logo.jpg">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Katalog Produk — Cemilan Ciamis">
+  <meta name="twitter:description" content="Katalog lengkap camilan tradisional khas Ciamis murah dan enak langsung dari pengrajin.">
+  <meta name="twitter:image" content="assets/images/logo.jpg">
+
+  <!-- Schema.org JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "Katalog Produk Cemilan Ciamis",
+    "description": "Daftar lengkap produk camilan khas Ciamis dari berbagai pelaku UMKM lokal.",
+    "url": "https://cemilanciamis.id/produk.html"
+  }
+  </script>
+
+  <link rel="icon" type="image/jpeg" href="assets/images/logo.jpg">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <!-- filter-chip styles already in components.css -->
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar" id="navbar">
+    <div class="container">
+      <a href="index.html" class="navbar-brand">
+        <img src="assets/images/logo.jpg" alt="Cemilan Ciamis" width="40" height="40">
+        <span>Cemilan Ciamis</span>
+      </a>
+
+      <div class="navbar-nav" id="navMenu">
+        <a href="index.html">Beranda</a>
+        <a href="produk.html" class="active">Produk</a>
+        <a href="index.html#penjual">Penjual</a>
+        <a href="cara-pesan.html">Cara Pesan</a>
+      </div>
+
+      <div class="navbar-actions">
+        <button class="cart-btn" id="cartBtn" aria-label="Keranjang Belanja">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          <span class="cart-badge" id="cartBadge"></span>
+        </button>
+        <button class="hamburger" id="hamburger" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <header class="page-header" style="background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; padding: 4rem 0 2rem; text-align: center; margin-top: 60px;">
+    <div class="container">
+      <h1 style="color: white; margin-bottom: 1rem;">Katalog Produk</h1>
+      <p style="opacity: 0.9;">Temukan berbagai cemilan lezat khas Ciamis</p>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="container">
+      <div class="filters-section" style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem;">
+        <div class="search-bar" style="display: flex; gap: 0.5rem; max-width: 400px; width: 100%;">
+          <input type="text" id="searchInput" placeholder="Cari produk..." class="form-control" style="flex: 1; padding: 0.75rem; border: 1px solid var(--border); border-radius: 8px;">
+          <button id="searchBtn" class="btn btn-primary">Cari</button>
+        </div>
+        <div class="filter-chips" id="filterChips" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          <button class="filter-chip active" data-category="all">Semua Kategori</button>
+          <!-- Injected by JS -->
+        </div>
+        <div class="sort-dropdown" style="align-self: flex-start;">
+          <select id="sortSelect" class="form-control" style="padding: 0.5rem; border-radius: 8px; border: 1px solid var(--border);">
+            <option value="newest">Terbaru</option>
+            <option value="price-asc">Harga Terendah</option>
+            <option value="price-desc">Harga Tertinggi</option>
+            <option value="popular">Terpopuler</option>
+          </select>
+        </div>
+        <div id="resultCount" style="color: var(--text-light); font-size: var(--text-sm);"></div>
+      </div>
+
+      <div class="product-grid" id="productGrid">
+        <!-- Injected by JS -->
+      </div>
+      
+      <div id="emptyState" style="display: none; text-align: center; padding: 3rem;">
+        <div style="font-size: 3rem; margin-bottom: 1rem;">🔍</div>
+        <h3>Produk tidak ditemukan</h3>
+        <p style="color: var(--text-light);">Coba gunakan kata kunci atau kategori lain.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer" id="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="navbar-brand">
+            <img src="assets/images/logo.jpg" alt="Cemilan Ciamis" width="40" height="40">
+            <span>Cemilan Ciamis</span>
+          </a>
+          <p>Platform digital UMKM makanan ringan khas Ciamis. Dibuat dengan cinta oleh ibu-ibu pengrajin lokal dari Desa Cikoneng.</p>
+        </div>
+
+        <div class="footer-section">
+          <h5>Navigasi</h5>
+          <ul>
+            <li><a href="index.html">Beranda</a></li>
+            <li><a href="produk.html">Semua Produk</a></li>
+            <li><a href="cara-pesan.html">Cara Pesan</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h5>Kategori</h5>
+          <ul>
+            <li><a href="produk.html?kategori=keripik">Keripik & Kerupuk</a></li>
+            <li><a href="produk.html?kategori=kue-kering">Kue Kering</a></li>
+            <li><a href="produk.html?kategori=manisan">Manisan & Dodol</a></li>
+            <li><a href="produk.html?kategori=kacang">Kacang & Camilan</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h5>Kontak</h5>
+          <ul>
+            <li>📍 Desa Cikoneng, Ciamis</li>
+            <li>📱 Hubungi via WhatsApp</li>
+            <li>🕐 Setiap Hari, 08.00 - 20.00</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>© 2024 Cemilan Ciamis. Paguyuban UMKM Desa Cikoneng, Ciamis.</p>
+        <p>Dibuat dengan 💜 untuk UMKM Indonesia</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Cart Drawer -->
+  <div class="overlay cart-overlay" id="cartOverlay"></div>
+  <aside class="cart-drawer" id="cartDrawer">
+    <div class="cart-drawer__header">
+      <h3>🛒 Keranjang Belanja</h3>
+      <button class="cart-drawer__close btn btn-ghost btn-icon" aria-label="Tutup">✕</button>
+    </div>
+    <div class="cart-drawer__body" id="cartBody"></div>
+    <div class="cart-drawer__footer" id="cartFooter"></div>
+  </aside>
+
+  <!-- Toast container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    let currentCategory = 'all';
+    let currentSearch = '';
+    let currentSort = 'newest';
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Parse URL params
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.has('kategori')) {
+        currentCategory = urlParams.get('kategori');
+      }
+
+      // Ambil data produk live dari Supabase jika ada
+      try {
+        const liveProducts = await getProductsFromSupabase();
+        if (liveProducts && liveProducts.length > 0) {
+          PRODUCTS = liveProducts;
+        }
+      } catch (err) {
+        console.warn('Menggunakan fallback data lokal:', err);
+      }
+
+      renderFilterChips();
+      setupEventListeners();
+      updateProducts();
+    });
+
+    function renderFilterChips() {
+      const chipsContainer = document.getElementById('filterChips');
+      let html = `<button class="filter-chip ${currentCategory === 'all' ? 'active' : ''}" data-category="all">Semua Kategori</button>`;
+      CATEGORIES.forEach(cat => {
+        html += `<button class="filter-chip ${currentCategory === cat.id ? 'active' : ''}" data-category="${cat.id}">${cat.name}</button>`;
+      });
+      chipsContainer.innerHTML = html;
+
+      // Add event listeners to chips
+      chipsContainer.querySelectorAll('.filter-chip').forEach(chip => {
+        chip.addEventListener('click', (e) => {
+          document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+          e.target.classList.add('active');
+          currentCategory = e.target.getAttribute('data-category');
+          // Update URL without reload
+          const newUrl = new URL(window.location);
+          if (currentCategory === 'all') {
+            newUrl.searchParams.delete('kategori');
+          } else {
+            newUrl.searchParams.set('kategori', currentCategory);
+          }
+          window.history.pushState({}, '', newUrl);
+          updateProducts();
+        });
+      });
+    }
+
+    function setupEventListeners() {
+      document.getElementById('searchBtn').addEventListener('click', () => {
+        currentSearch = document.getElementById('searchInput').value;
+        updateProducts();
+      });
+      
+      document.getElementById('searchInput').addEventListener('keyup', (e) => {
+        if (e.key === 'Enter') {
+          currentSearch = e.target.value;
+          updateProducts();
+        }
+      });
+
+      document.getElementById('sortSelect').addEventListener('change', (e) => {
+        currentSort = e.target.value;
+        updateProducts();
+      });
+    }
+
+    function updateProducts() {
+      let filtered = searchProducts(currentSearch);
+      
+      if (currentCategory !== 'all') {
+        filtered = filtered.filter(p => p.category === currentCategory);
+      }
+
+      // Sorting
+      filtered.sort((a, b) => {
+        if (currentSort === 'newest') {
+          return new Date(b.createdAt) - new Date(a.createdAt);
+        } else if (currentSort === 'price-asc') {
+          const pA = getDiscountedPrice(a.basePrice, a.discount);
+          const pB = getDiscountedPrice(b.basePrice, b.discount);
+          return pA - pB;
+        } else if (currentSort === 'price-desc') {
+          const pA = getDiscountedPrice(a.basePrice, a.discount);
+          const pB = getDiscountedPrice(b.basePrice, b.discount);
+          return pB - pA;
+        } else if (currentSort === 'popular') {
+          return b.viewCount - a.viewCount;
+        }
+        return 0;
+      });
+
+      const grid = document.getElementById('productGrid');
+      const emptyState = document.getElementById('emptyState');
+      const resultCount = document.getElementById('resultCount');
+
+      resultCount.textContent = `Menampilkan ${filtered.length} produk`;
+
+      if (filtered.length === 0) {
+        grid.style.display = 'none';
+        emptyState.style.display = 'block';
+      } else {
+        grid.style.display = 'grid'; // Assuming .product-grid is display grid in css
+        emptyState.style.display = 'none';
+        grid.innerHTML = filtered.map(p => renderProductCard(p)).join('');
+      }
+    }
+  </script>
+</body>
+</html>

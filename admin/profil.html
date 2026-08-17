@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Profil - Panel Penjual Cemilan Ciamis</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body class="admin-body">
+
+  <div class="admin-topbar">
+    <div class="container">
+      <div class="admin-topbar__title">Profil Saya</div>
+    </div>
+  </div>
+
+  <div class="container mt-6">
+    <div class="seller-card__avatar" id="profileAvatar" style="width: 120px; height: 120px; font-size: 4rem;">👩‍🍳</div>
+    
+    <form id="profileForm" class="mt-6 mb-8">
+      <div class="form-group text-center">
+        <button type="button" class="btn btn-outline btn-sm" onclick="alert('Demo: Ubah foto belum tersedia')">Ubah Foto Profil</button>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="inputFullName">Nama Lengkap</label>
+        <input type="text" class="form-input" id="inputFullName" required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="inputShopName">Nama Toko</label>
+        <input type="text" class="form-input" id="inputShopName" required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="inputWa">Nomor WhatsApp (62...)</label>
+        <input type="tel" class="form-input" id="inputWa" required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="inputAddress">Alamat / Desa</label>
+        <input type="text" class="form-input" id="inputAddress" required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="inputBio">Bio Toko</label>
+        <textarea class="form-textarea" id="inputBio" required></textarea>
+      </div>
+
+      <button type="button" class="btn btn-primary btn-block btn-lg mt-6" onclick="saveProfile()">Simpan Perubahan</button>
+      <button type="button" class="btn btn-ghost btn-block btn-lg mt-4" style="color: var(--danger-500);" onclick="logout()">Keluar / Logout</button>
+    </form>
+  </div>
+
+  <!-- Toast (simulated) -->
+  <div id="toast" style="position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--success-500);color:white;padding:12px 24px;border-radius:100px;font-weight:600;transition:all 0.3s ease;opacity:0;z-index:9999;">Tersimpan!</div>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <div class="bottom-nav__items">
+      <a href="dashboard.html" class="bottom-nav__item">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+        Dashboard
+      </a>
+      <a href="produk.html" class="bottom-nav__item">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+        Produk
+      </a>
+      <a href="profil.html" class="bottom-nav__item active">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+        Profil
+      </a>
+    </div>
+  </nav>
+
+  <script src="../js/data.js"></script>
+  <script>
+    if(localStorage.getItem('adminLoggedIn') !== 'true') {
+      window.location.href = 'login.html';
+    }
+
+    const sellerId = localStorage.getItem('adminSellerId') || 'bu-siti';
+    const seller = getSellerById(sellerId);
+
+    if(seller) {
+      document.getElementById('profileAvatar').textContent = seller.avatar;
+      document.getElementById('inputFullName').value = seller.name;
+      document.getElementById('inputShopName').value = seller.shopName;
+      document.getElementById('inputWa').value = seller.whatsapp;
+      document.getElementById('inputAddress').value = seller.village;
+      document.getElementById('inputBio').value = seller.bio;
+    }
+
+    function saveProfile() {
+      // Simulate saving
+      const toast = document.getElementById('toast');
+      toast.style.transform = 'translateX(-50%) translateY(0)';
+      toast.style.opacity = '1';
+      
+      setTimeout(() => {
+        toast.style.transform = 'translateX(-50%) translateY(100px)';
+        toast.style.opacity = '0';
+      }, 2000);
+    }
+
+    function logout() {
+      localStorage.removeItem('adminLoggedIn');
+      localStorage.removeItem('adminSellerId');
+      window.location.href = 'login.html';
+    }
+  </script>
+</body>
+</html>

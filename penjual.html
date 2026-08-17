@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profil Penjual — Cemilan Ciamis</title>
+  <meta name="description" content="Profil toko dan daftar produk camilan tradisional khas Ciamis langsung dari pengrajin UMKM.">
+  <meta name="keywords" content="toko cemilan ciamis, umkm ciamis, beli cemilan langsung pengrajin">
+  <link rel="canonical" href="https://cemilanciamis.id/penjual.html">
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="Profil Penjual — Cemilan Ciamis">
+  <meta property="og:description" content="Profil toko dan daftar produk camilan khas Ciamis langsung dari pengrajin rumahan.">
+  <meta property="og:type" content="profile">
+  <meta property="og:image" content="assets/images/logo.jpg">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Profil Penjual — Cemilan Ciamis">
+  <meta name="twitter:description" content="Profil toko camilan khas Ciamis langsung dari pengrajin rumahan.">
+  <meta name="twitter:image" content="assets/images/logo.jpg">
+
+  <script type="application/ld+json" id="sellerJsonLd"></script>
+
+  <link rel="icon" type="image/jpeg" href="assets/images/logo.jpg">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <style>
+    .seller-profile-header {
+      background: linear-gradient(135deg, var(--bg-surface), #f8f9fa);
+      padding: 4rem 0;
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+      margin-top: 60px;
+    }
+    .seller-avatar-large {
+      font-size: 5rem;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 4px solid var(--primary);
+      margin: 0 auto 1.5rem;
+      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+    }
+    .seller-stats {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin: 2rem 0;
+    }
+    .stat-item {
+      text-align: center;
+    }
+    .stat-item .value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .stat-item .label {
+      font-size: var(--text-sm);
+      color: var(--text-light);
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar" id="navbar">
+    <div class="container">
+      <a href="index.html" class="navbar-brand">
+        <img src="assets/images/logo.jpg" alt="Cemilan Ciamis" width="40" height="40">
+        <span>Cemilan Ciamis</span>
+      </a>
+      <div class="navbar-nav" id="navMenu">
+        <a href="index.html">Beranda</a>
+        <a href="produk.html">Produk</a>
+        <a href="index.html#penjual" class="active">Penjual</a>
+        <a href="cara-pesan.html">Cara Pesan</a>
+      </div>
+      <div class="navbar-actions">
+        <button class="cart-btn" id="cartBtn" aria-label="Keranjang Belanja">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          <span class="cart-badge" id="cartBadge"></span>
+        </button>
+        <button class="hamburger" id="hamburger" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div id="sellerContainer">
+    <!-- Injected by JS -->
+  </div>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <h2>Semua Produk <span class="text-gradient">Penjual</span></h2>
+      </div>
+      <div class="product-grid" id="sellerProductsGrid"></div>
+    </div>
+  </section>
+
+  <!-- Footer, Cart, Toasts -->
+  <footer class="footer" id="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="navbar-brand">
+            <img src="assets/images/logo.jpg" alt="Cemilan Ciamis" width="40" height="40">
+            <span>Cemilan Ciamis</span>
+          </a>
+          <p>Platform digital UMKM makanan ringan khas Ciamis.</p>
+        </div>
+        <div class="footer-section">
+          <h5>Navigasi</h5><ul><li><a href="index.html">Beranda</a></li><li><a href="produk.html">Produk</a></li><li><a href="cara-pesan.html">Cara Pesan</a></li></ul>
+        </div>
+      </div>
+      <div class="footer-bottom"><p>© 2024 Cemilan Ciamis.</p></div>
+    </div>
+  </footer>
+
+  <div class="overlay cart-overlay" id="cartOverlay"></div>
+  <aside class="cart-drawer" id="cartDrawer">
+    <div class="cart-drawer__header">
+      <h3>🛒 Keranjang Belanja</h3>
+      <button class="cart-drawer__close btn btn-ghost btn-icon" aria-label="Tutup">✕</button>
+    </div>
+    <div class="cart-drawer__body" id="cartBody"></div>
+    <div class="cart-drawer__footer" id="cartFooter"></div>
+  </aside>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const sellerId = urlParams.get('id');
+      const seller = getSellerById(sellerId);
+
+      if (!seller) {
+        document.getElementById('sellerContainer').innerHTML = `
+          <header class="seller-profile-header">
+            <div class="container">
+              <h2>Penjual tidak ditemukan</h2>
+              <a href="index.html#penjual" class="btn btn-primary mt-4">Lihat Daftar Penjual</a>
+            </div>
+          </header>
+        `;
+        document.querySelector('.section').style.display = 'none';
+        return;
+      }
+
+      const products = getProductsBySeller(seller.id);
+      const totalViews = products.reduce((acc, p) => acc + p.viewCount, 0);
+
+      document.title = `${seller.shopName} — Cemilan Ciamis`;
+
+      // Dynamic SEO and Schema.org JSON-LD
+      const metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc) metaDesc.setAttribute('content', `${seller.shopName} oleh ${seller.name} (${seller.village}). ${seller.bio}`);
+      const ogTitle = document.querySelector('meta[property="og:title"]');
+      if (ogTitle) ogTitle.setAttribute('content', `${seller.shopName} — Cemilan Ciamis`);
+      const ogDesc = document.querySelector('meta[property="og:description"]');
+      if (ogDesc) ogDesc.setAttribute('content', seller.bio);
+
+      const schemaData = {
+        "@context": "https://schema.org",
+        "@type": "Store",
+        "name": seller.shopName,
+        "image": "https://cemilanciamis.id/assets/images/logo.jpg",
+        "description": seller.bio,
+        "telephone": seller.whatsapp,
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": seller.village,
+          "addressLocality": "Ciamis",
+          "addressRegion": "Jawa Barat",
+          "addressCountry": "ID"
+        },
+        "priceRange": "Rp10.000 - Rp100.000"
+      };
+      const scriptEl = document.getElementById('sellerJsonLd') || document.createElement('script');
+      scriptEl.type = 'application/ld+json';
+      scriptEl.id = 'sellerJsonLd';
+      scriptEl.textContent = JSON.stringify(schemaData);
+      if (!document.getElementById('sellerJsonLd')) document.head.appendChild(scriptEl);
+
+      document.getElementById('sellerContainer').innerHTML = `
+        <header class="seller-profile-header">
+          <div class="container">
+            <div class="seller-avatar-large">${seller.avatar}</div>
+            <h1 style="margin-bottom: 0.5rem;">${seller.shopName}</h1>
+            <p style="color: var(--text-light); font-size: 1.1rem; margin-bottom: 1rem;">Milik ${seller.name}</p>
+            <p style="max-width: 600px; margin: 0 auto 2rem;">${seller.bio}</p>
+            
+            <div class="seller-stats">
+              <div class="stat-item">
+                <div class="value">${seller.productCount}</div>
+                <div class="label">Produk</div>
+              </div>
+              <div class="stat-item">
+                <div class="value">${totalViews}</div>
+                <div class="label">Total Dilihat</div>
+              </div>
+              <div class="stat-item">
+                <div class="value">${seller.village.split(',')[0]}</div>
+                <div class="label">Lokasi</div>
+              </div>
+            </div>
+
+            <button class="btn btn-whatsapp" onclick="WhatsApp.openChat('${seller.whatsapp}', 'Halo ${seller.name}, saya ingin bertanya tentang produk di toko Anda.')">
+              Hubungi via WhatsApp
+            </button>
+          </div>
+        </header>
+      `;
+
+      const grid = document.getElementById('sellerProductsGrid');
+      if (products.length > 0) {
+        grid.innerHTML = products.map(p => renderProductCard(p)).join('');
+      } else {
+        grid.innerHTML = '<p style="color: var(--text-light); text-align: center; grid-column: 1/-1;">Belum ada produk.</p>';
+      }
+    });
+  </script>
+</body>
+</html>

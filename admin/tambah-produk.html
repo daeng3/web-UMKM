@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Tambah/Edit Produk - Panel Penjual Cemilan Ciamis</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body class="admin-body" style="padding-bottom: 20px;">
+
+  <div class="admin-topbar">
+    <div class="container">
+      <div style="display: flex; align-items: center; gap: var(--space-3);">
+        <a href="produk.html" class="admin-topbar__back" aria-label="Kembali">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+        </a>
+        <div class="admin-topbar__title" id="pageTitle">Tambah Produk</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container mt-6">
+    <form class="product-form" id="productForm">
+      
+      <!-- Seller Selector (Super Admin Only) -->
+      <div class="form-group mb-4" id="sellerSelectGroup" style="display: none; background: var(--primary-50); padding: var(--space-3); border-radius: var(--radius-lg); border: 1px solid var(--primary-200);">
+        <label class="form-label color-primary" style="font-weight: 700; display: flex; align-items: center; gap: 6px;">👑 Pilih Toko Pemilik Produk</label>
+        <select class="form-select" id="inputSeller">
+          <option value="">-- Pilih Toko UMKM --</option>
+        </select>
+      </div>
+
+      <!-- Photos -->
+      <div class="form-group">
+        <label class="form-label">Foto Produk</label>
+        <div class="form-file-upload" onclick="alert('Demo: Upload foto gambar statis menggunakan emoji')">
+          <div class="upload-icon">📷</div>
+          <div class="upload-text">Klik untuk pilih ikon produk</div>
+          <input type="file" multiple accept="image/*">
+        </div>
+        <div class="image-preview-grid" id="imagePreviewGrid">
+          <div class="image-preview-item" title="Ikon produk saat ini">
+            <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2rem;" id="emojiPreview">🛍️</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Basic Info -->
+      <div class="form-group">
+        <label class="form-label" for="inputName">Nama Produk *</label>
+        <input type="text" class="form-input" id="inputName" placeholder="Contoh: Keripik Singkong" required>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label" for="inputDesc">Deskripsi *</label>
+        <textarea class="form-textarea" id="inputDesc" placeholder="Jelaskan produk Anda secara detail..." required></textarea>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label" for="inputCategory">Kategori *</label>
+        <select class="form-select" id="inputCategory" required>
+          <option value="">Pilih Kategori...</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="inputBasePrice">Harga Dasar (Rp) *</label>
+        <input type="number" class="form-input" id="inputBasePrice" placeholder="Contoh: 15000" min="0" required>
+      </div>
+
+      <!-- Variations -->
+      <div class="form-group mt-8">
+        <div class="admin-section-header">
+          <h3>Variasi & Harga</h3>
+        </div>
+        <div class="variation-inputs" id="variationContainer">
+          <!-- Populated by JS -->
+        </div>
+        <button type="button" class="add-variation-btn mt-3" onclick="addVariationRow()">
+          ➕ Tambah Variasi
+        </button>
+      </div>
+
+      <!-- Settings -->
+      <div class="form-group mt-8">
+        <div class="admin-section-header">
+          <h3>Pengaturan Lanjutan</h3>
+        </div>
+        
+        <div class="flex-between mb-4">
+          <div>
+            <div class="font-semi">Tandai sebagai Produk Baru</div>
+            <div class="text-sm color-muted">Akan muncul label 'Baru'</div>
+          </div>
+          <div class="toggle" id="toggleNew" onclick="this.classList.toggle('active')"></div>
+        </div>
+        
+        <div class="flex-between mb-4">
+          <div>
+            <div class="font-semi">Tandai sebagai Unggulan</div>
+            <div class="text-sm color-muted">Akan muncul di halaman depan</div>
+          </div>
+          <div class="toggle" id="toggleFeatured" onclick="this.classList.toggle('active')"></div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="inputDiscount">Diskon (%) - Opsional</label>
+          <input type="number" class="form-input" id="inputDiscount" placeholder="0" min="0" max="100">
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block btn-lg mt-8">Simpan Produk</button>
+    </form>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--success-500);color:white;padding:12px 24px;border-radius:100px;font-weight:600;transition:all 0.3s ease;opacity:0;z-index:9999;">Tersimpan!</div>
+
+  <script src="../js/data.js"></script>
+  <script>
+    if(localStorage.getItem('adminLoggedIn') !== 'true') {
+      window.location.href = 'login.html';
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const editId = urlParams.get('id');
+    const pageTitle = document.getElementById('pageTitle');
+    const role = localStorage.getItem('adminRole') || 'seller';
+    const currentSellerId = localStorage.getItem('adminSellerId') || 'bu-siti';
+    
+    // Populate categories
+    const catSelect = document.getElementById('inputCategory');
+    CATEGORIES.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.id;
+      opt.textContent = c.icon + ' ' + c.name;
+      catSelect.appendChild(opt);
+    });
+
+    // Populate seller select if Super Admin
+    const sellerSelectGroup = document.getElementById('sellerSelectGroup');
+    const inputSeller = document.getElementById('inputSeller');
+    if (role === 'super_admin') {
+      sellerSelectGroup.style.display = 'block';
+      inputSeller.required = true;
+      SELLERS.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s.id;
+        opt.textContent = `🏪 ${s.shopName} (${s.name})`;
+        inputSeller.appendChild(opt);
+      });
+    }
+
+    const variationContainer = document.getElementById('variationContainer');
+    
+    function addVariationRow(name = '', price = '') {
+      const row = document.createElement('div');
+      row.className = 'variation-row';
+      row.innerHTML = `
+        <input type="text" class="form-input var-name" placeholder="Varian (ex: Pedas)" value="${name}" required>
+        <input type="number" class="form-input var-price" placeholder="Harga" value="${price}" min="0" required>
+        <button type="button" class="remove-btn" onclick="this.parentElement.remove()">❌</button>
+      `;
+      variationContainer.appendChild(row);
+    }
+
+    if(editId) {
+      pageTitle.textContent = 'Edit Produk';
+      const product = getProductById(editId);
+      if(product) {
+        document.getElementById('inputName').value = product.name;
+        document.getElementById('inputDesc').value = product.description;
+        document.getElementById('inputCategory').value = product.category;
+        document.getElementById('inputBasePrice').value = product.basePrice;
+        document.getElementById('inputDiscount').value = product.discount || '';
+        document.getElementById('emojiPreview').textContent = product.emoji || '🛍️';
+        if (role === 'super_admin') {
+          inputSeller.value = product.sellerId;
+        }
+        
+        if(product.isNew) document.getElementById('toggleNew').classList.add('active');
+        if(product.isFeatured) document.getElementById('toggleFeatured').classList.add('active');
+        
+        if(product.variations && product.variations.length > 0) {
+          product.variations.forEach(v => addVariationRow(v.name, v.price));
+        } else {
+          addVariationRow();
+        }
+      }
+    } else {
+      addVariationRow();
+      if (role === 'super_admin' && SELLERS.length > 0) {
+        inputSeller.value = SELLERS[0].id;
+      }
+    }
+
+    document.getElementById('productForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const targetSellerId = role === 'super_admin' ? inputSeller.value : currentSellerId;
+      if (!targetSellerId) {
+        alert('Pilih toko pemilih produk terlebih dahulu!');
+        return;
+      }
+
+      const name = document.getElementById('inputName').value.trim();
+      const desc = document.getElementById('inputDesc').value.trim();
+      const category = document.getElementById('inputCategory').value;
+      const basePrice = parseInt(document.getElementById('inputBasePrice').value, 10) || 0;
+      const discount = parseInt(document.getElementById('inputDiscount').value, 10) || 0;
+      const isNew = document.getElementById('toggleNew').classList.contains('active');
+      const isFeatured = document.getElementById('toggleFeatured').classList.contains('active');
+      const emoji = document.getElementById('emojiPreview').textContent || '🛍️';
+      
+      const varRows = variationContainer.querySelectorAll('.variation-row');
+      const variations = [];
+      varRows.forEach(row => {
+        const vName = row.querySelector('.var-name').value.trim();
+        const vPrice = parseInt(row.querySelector('.var-price').value, 10) || 0;
+        if (vName && vPrice > 0) {
+          variations.push({ name: vName, price: vPrice });
+        }
+      });
+
+      if (editId) {
+        const prod = getProductById(editId);
+        if (prod) {
+          prod.name = name;
+          prod.description = desc;
+          prod.category = category;
+          prod.basePrice = basePrice;
+          prod.discount = discount;
+          prod.isNew = isNew;
+          prod.isFeatured = isFeatured;
+          prod.emoji = emoji;
+          prod.variations = variations;
+          prod.sellerId = targetSellerId;
+          prod.updatedAt = new Date().toISOString().split('T')[0];
+          saveProductsToStorage();
+        }
+      } else {
+        const newProd = {
+          id: 'prod-' + Date.now(),
+          sellerId: targetSellerId,
+          name: name,
+          category: category,
+          emoji: emoji,
+          basePrice: basePrice,
+          discount: discount,
+          rating: 5.0,
+          reviewCount: 0,
+          description: desc,
+          variations: variations.length > 0 ? variations : [{ name: 'Standar (250g)', price: basePrice }],
+          isFeatured: isFeatured,
+          isNew: isNew,
+          isActive: true,
+          viewCount: 0,
+          createdAt: new Date().toISOString().split('T')[0],
+          updatedAt: new Date().toISOString().split('T')[0]
+        };
+        PRODUCTS.push(newProd);
+        saveProductsToStorage();
+
+        // Increment seller product count
+        const sellerObj = getSellerById(targetSellerId);
+        if (sellerObj) {
+          sellerObj.productCount = (sellerObj.productCount || 0) + 1;
+          saveSellersToStorage();
+        }
+      }
+
+      // Show toast
+      const toast = document.getElementById('toast');
+      toast.style.transform = 'translateX(-50%) translateY(0)';
+      toast.style.opacity = '1';
+      
+      setTimeout(() => {
+        toast.style.transform = 'translateX(-50%) translateY(100px)';
+        toast.style.opacity = '0';
+        setTimeout(() => {
+          window.location.href = 'produk.html';
+        }, 300);
+      }, 1500);
+    });
+  </script>
+</body>
+</html>

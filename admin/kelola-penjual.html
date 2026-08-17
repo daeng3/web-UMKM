@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Kelola Penjual - Panel Super Admin</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/admin.css">
+  <style>
+    .seller-admin-card {
+      background: var(--bg-surface);
+      border-radius: var(--radius-xl);
+      padding: var(--space-4);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid rgba(0,0,0,0.05);
+      margin-bottom: var(--space-3);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+    .seller-admin-card__top {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+    .seller-admin-card__avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: var(--radius-lg);
+      background: var(--primary-50);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+    }
+    .seller-admin-card__info h4 {
+      font-size: var(--text-base);
+      margin-bottom: 2px;
+      color: var(--text-heading);
+    }
+    .seller-admin-card__info p {
+      font-size: var(--text-xs);
+      color: var(--text-muted);
+    }
+    .badge-status {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+      font-size: 10px;
+      font-weight: 700;
+    }
+    .badge-status.temp { background: var(--warning-100); color: var(--warning-800); }
+    .badge-status.secure { background: var(--success-100); color: var(--success-800); }
+    .seller-admin-card__actions {
+      display: flex;
+      gap: var(--space-2);
+      border-top: 1px solid var(--neutral-100);
+      padding-top: var(--space-3);
+    }
+  </style>
+</head>
+<body class="admin-body">
+
+  <!-- Topbar -->
+  <header class="admin-topbar">
+    <div class="container">
+      <a href="dashboard.html" class="admin-topbar__back" aria-label="Kembali">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+      </a>
+      <div class="admin-topbar__title">👥 Kelola Akun Penjual</div>
+      <div style="width: 40px;"></div>
+    </div>
+  </header>
+
+  <main class="container" style="padding-top: var(--space-4); padding-bottom: 100px;">
+    
+    <!-- Bagian Form Buat Akun Baru -->
+    <section class="admin-card mb-6">
+      <div class="admin-section-header" style="margin-bottom: var(--space-3);">
+        <h3 style="display: flex; align-items: center; gap: 8px;">✨ Buat Akun Penjual Baru</h3>
+      </div>
+      <p style="font-size: var(--text-xs); color: var(--text-muted); margin-bottom: var(--space-4);">
+        Akun yang dibuat oleh Admin akan diatur dengan status <b>Wajib Ganti Sandi</b> saat penjual login pertama kali.
+      </p>
+
+      <form id="createSellerForm">
+        <div class="form-group mb-3">
+          <label class="form-label" for="newShopName">Nama Toko *</label>
+          <input type="text" class="form-input" id="newShopName" placeholder="Contoh: Keripik Pak Budi" required>
+        </div>
+        <div class="form-group mb-3">
+          <label class="form-label" for="newOwnerName">Nama Pemilik *</label>
+          <input type="text" class="form-input" id="newOwnerName" placeholder="Contoh: Pak Budi Santoso" required>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3);" class="mb-3">
+          <div class="form-group">
+            <label class="form-label" for="newUsername">Username *</label>
+            <input type="text" class="form-input" id="newUsername" placeholder="pakbudi" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="newPassword">Sandi Sementara *</label>
+            <input type="text" class="form-input" id="newPassword" value="Ciamis123" required>
+          </div>
+        </div>
+        <div class="form-group mb-3">
+          <label class="form-label" for="newWhatsapp">Nomor WhatsApp *</label>
+          <input type="tel" class="form-input" id="newWhatsapp" placeholder="081234567890" required>
+        </div>
+        <div class="form-group mb-3">
+          <label class="form-label" for="newVillage">Alamat / Desa</label>
+          <input type="text" class="form-input" id="newVillage" value="Desa Cikoneng, Ciamis">
+        </div>
+        <div class="form-group mb-4">
+          <label class="form-label" for="newBio">Bio Singkat Toko</label>
+          <textarea class="form-input" id="newBio" rows="2" placeholder="Pengrajin camilan renyah berkualitas..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">➕ Buat Akun & Aktifkan Toko</button>
+      </form>
+    </section>
+
+    <!-- Daftar Penjual -->
+    <section>
+      <div class="admin-section-header">
+        <h3>Daftar Penjual Terdaftar (<span id="sellerCountBadge">0</span>)</h3>
+      </div>
+      <div id="sellersList"></div>
+    </section>
+
+  </main>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <div class="bottom-nav__items">
+      <a href="dashboard.html" class="bottom-nav__item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        <span>Dasbor</span>
+      </a>
+      <a href="produk.html" class="bottom-nav__item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        <span>Produk</span>
+      </a>
+      <a href="kelola-penjual.html" class="bottom-nav__item active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span>Penjual</span>
+      </a>
+      <a href="profil.html" class="bottom-nav__item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span>Profil</span>
+      </a>
+    </div>
+  </nav>
+
+  <script src="../js/data.js"></script>
+  <script>
+    // Cek Otorisasi Super Admin
+    if (localStorage.getItem('adminLoggedIn') !== 'true' || localStorage.getItem('adminRole') !== 'super_admin') {
+      alert('Akses Ditolak: Halaman ini khusus untuk Super Admin Paguyuban.');
+      window.location.href = 'dashboard.html';
+    }
+
+    const sellersList = document.getElementById('sellersList');
+    const sellerCountBadge = document.getElementById('sellerCountBadge');
+    const createSellerForm = document.getElementById('createSellerForm');
+
+    function renderSellers() {
+      sellerCountBadge.textContent = SELLERS.length;
+      if (SELLERS.length === 0) {
+        sellersList.innerHTML = '<p style="text-align:center; color: var(--text-muted); padding: 2rem;">Belum ada akun penjual terdaftar.</p>';
+        return;
+      }
+
+      sellersList.innerHTML = SELLERS.map(s => {
+        const prodCount = PRODUCTS.filter(p => p.sellerId === s.id).length;
+        const statusBadge = s.mustChangePassword ? 
+          `<span class="badge-status temp" title="Penjual wajib ganti sandi saat login">🔒 Sandi Sementara</span>` : 
+          `<span class="badge-status secure">✅ Sandi Pribadi</span>`;
+
+        return `
+          <div class="seller-admin-card animate-fade-in-up">
+            <div class="seller-admin-card__top">
+              <div class="seller-admin-card__avatar">${s.avatar || '👩‍🍳'}</div>
+              <div class="seller-admin-card__info">
+                <h4>${s.shopName} ${statusBadge}</h4>
+                <p>Pemilik: <b>${s.name}</b> | Username: <code>${s.username}</code></p>
+                <p>WA: 0${s.whatsapp.startsWith('62') ? s.whatsapp.slice(2) : s.whatsapp} • ${prodCount} Produk</p>
+              </div>
+            </div>
+            <div class="seller-admin-card__actions">
+              <button class="btn btn-ghost btn-sm" style="flex: 1; color: var(--warning-700);" onclick="handleResetPassword('${s.id}', '${s.shopName}')">
+                🔑 Reset Sandi
+              </button>
+              <button class="btn btn-ghost btn-sm" style="flex: 1; color: var(--danger-600);" onclick="handleDeleteSeller('${s.id}', '${s.shopName}')">
+                🗑️ Hapus Akun
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    createSellerForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const newSellerData = {
+        shopName: document.getElementById('newShopName').value,
+        name: document.getElementById('newOwnerName').value,
+        username: document.getElementById('newUsername').value,
+        password: document.getElementById('newPassword').value,
+        whatsapp: document.getElementById('newWhatsapp').value,
+        village: document.getElementById('newVillage').value,
+        bio: document.getElementById('newBio').value,
+        avatar: '👩‍🍳'
+      };
+
+      const res = createSellerByAdmin(newSellerData);
+      if (res.success) {
+        alert(`Berhasil membuat akun untuk toko "${newSellerData.shopName}"!\nUsername: ${newSellerData.username}\nSandi Sementara: ${newSellerData.password}`);
+        createSellerForm.reset();
+        document.getElementById('newPassword').value = 'Ciamis123';
+        document.getElementById('newVillage').value = 'Desa Cikoneng, Ciamis';
+        renderSellers();
+      } else {
+        alert('Gagal membuat akun: ' + res.message);
+      }
+    });
+
+    function handleResetPassword(sellerId, shopName) {
+      const tempPass = prompt(`Masukkan kata sandi sementara baru untuk toko "${shopName}":`, 'CiamisBaru123');
+      if (tempPass !== null && tempPass.trim().length >= 6) {
+        const res = resetSellerPasswordByAdmin(sellerId, tempPass.trim());
+        if (res.success) {
+          alert(`Sandi untuk "${shopName}" berhasil direset ke "${tempPass.trim()}". Penjual diwajibkan mengganti sandi saat login berikutnya.`);
+          renderSellers();
+        } else {
+          alert('Gagal mereset sandi.');
+        }
+      } else if (tempPass !== null) {
+        alert('Sandi sementara minimal 6 karakter!');
+      }
+    }
+
+    function handleDeleteSeller(sellerId, shopName) {
+      if (confirm(`⚠️ PERINGATAN:\nApakah Anda yakin ingin menghapus akun toko "${shopName}"?\nAkun yang dihapus tidak dapat dipulihkan kembali!`)) {
+        const res = deleteSellerByAdmin(sellerId);
+        if (res.success) {
+          alert(`Toko "${shopName}" berhasil dihapus.`);
+          renderSellers();
+        } else {
+          alert('Gagal menghapus toko.');
+        }
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', renderSellers);
+  </script>
+</body>
+</html>

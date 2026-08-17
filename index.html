@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cemilan Ciamis — Marketplace Makanan Ringan Khas Ciamis</title>
+  <meta name="description" content="Platform digital UMKM makanan ringan khas Ciamis. Temukan keripik, kue kering, dodol, dan camilan tradisional langsung dari pengrajin rumahan.">
+  <meta name="keywords" content="cemilan ciamis, makanan ringan, keripik, kue kering, dodol, UMKM, oleh-oleh ciamis">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Cemilan Ciamis — Marketplace Makanan Ringan Khas Ciamis">
+  <meta property="og:description" content="Temukan camilan tradisional khas Ciamis langsung dari pengrajin rumahan.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://cemilanciamis.id/">
+  <meta property="og:image" content="assets/images/logo.jpg">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Cemilan Ciamis — Marketplace Makanan Ringan Khas Ciamis">
+  <meta name="twitter:description" content="Platform digital UMKM makanan ringan khas Ciamis langsung dari pengrajin rumahan.">
+  <meta name="twitter:image" content="assets/images/logo.jpg">
+  <link rel="canonical" href="https://cemilanciamis.id/">
+
+  <!-- Schema.org JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://cemilanciamis.id/#website",
+        "url": "https://cemilanciamis.id/",
+        "name": "Cemilan Ciamis",
+        "description": "Platform digital UMKM makanan ringan khas Ciamis",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://cemilanciamis.id/produk.html?search={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      },
+      {
+        "@type": "Organization",
+        "@id": "https://cemilanciamis.id/#organization",
+        "name": "Cemilan Ciamis UMKM",
+        "url": "https://cemilanciamis.id/",
+        "logo": "https://cemilanciamis.id/assets/images/logo.jpg",
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "telephone": "+6281234567890",
+          "contactType": "customer service",
+          "areaServed": "ID",
+          "availableLanguage": "Indonesian"
+        }
+      },
+      {
+        "@type": "LocalBusiness",
+        "name": "Cemilan Ciamis Marketplace UMKM",
+        "image": "https://cemilanciamis.id/assets/images/logo.jpg",
+        "@id": "https://cemilanciamis.id/#localbusiness",
+        "url": "https://cemilanciamis.id/",
+        "telephone": "+6281234567890",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Jl. Raya Ciamis No. 123",
+          "addressLocality": "Ciamis",
+          "addressRegion": "Jawa Barat",
+          "postalCode": "46211",
+          "addressCountry": "ID"
+        },
+        "priceRange": "Rp10.000 - Rp100.000"
+      }
+    ]
+  }
+  </script>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/jpeg" href="assets/images/logo.jpg">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+
+  <!-- ============================================
+       Navbar
+       ============================================ -->
+  <nav class="navbar" id="navbar">
+    <div class="container">
+      <a href="index.html" class="navbar-brand">
+        <img src="assets/images/logo.jpg" alt="Cemilan Ciamis" width="40" height="40">
+        <span>Cemilan Ciamis</span>
+      </a>
+
+      <div class="navbar-nav" id="navMenu">
+        <a href="index.html" class="active">Beranda</a>
+        <a href="produk.html">Produk</a>
+        <a href="#penjual">Penjual</a>
+        <a href="cara-pesan.html">Cara Pesan</a>
+      </div>
+
+      <div class="navbar-actions">
+        <button class="cart-btn" id="cartBtn" aria-label="Keranjang Belanja">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          <span class="cart-badge" id="cartBadge"></span>
+        </button>
+        <button class="hamburger" id="hamburger" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ============================================
+       Hero Section
+       ============================================ -->
+  <section class="hero" id="hero">
+    <!-- Floating decorative emojis -->
+    <span class="hero-decoration">🥔</span>
+    <span class="hero-decoration">🍪</span>
+    <span class="hero-decoration">🍬</span>
+    <span class="hero-decoration">🥜</span>
+    <span class="hero-decoration">🍘</span>
+
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-badge">
+          🏪 Paguyuban UMKM Desa Cikoneng, Ciamis
+        </div>
+
+        <h1>Cemilan Khas <span class="text-gradient-gold">Ciamis</span></h1>
+
+        <p class="hero-subtitle">
+          Temukan beragam makanan ringan tradisional berkualitas, dibuat dengan cinta
+          oleh ibu-ibu pengrajin lokal. Langsung dari dapur ke tangan Anda!
+        </p>
+
+        <div class="hero-actions">
+          <a href="produk.html" class="btn btn-accent btn-lg">
+            🛍️ Lihat Semua Produk
+          </a>
+          <a href="#cara-pesan" class="btn btn-secondary btn-lg" style="background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.3);color:white;">
+            📖 Cara Pesan
+          </a>
+        </div>
+
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <span class="stat-number">12+</span>
+            <span class="stat-label">Produk</span>
+          </div>
+          <div class="hero-stat">
+            <span class="stat-number">3</span>
+            <span class="stat-label">Penjual</span>
+          </div>
+          <div class="hero-stat">
+            <span class="stat-number">100%</span>
+            <span class="stat-label">Buatan Lokal</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       Kategori Section
+       ============================================ -->
+  <section class="section" id="kategori">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-badge">📂 Kategori</span>
+        <h2>Pilih Kategori <span class="text-gradient">Favoritmu</span></h2>
+        <p>Jelajahi beragam pilihan cemilan khas Ciamis dari berbagai kategori</p>
+      </div>
+
+      <div class="category-grid reveal delay-1" id="categoryGrid">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       Produk Unggulan
+       ============================================ -->
+  <section class="section" style="background: var(--bg-surface);" id="unggulan">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-badge">⭐ Unggulan</span>
+        <h2>Produk <span class="text-gradient">Unggulan</span></h2>
+        <p>Produk terlaris dan paling direkomendasikan oleh pelanggan kami</p>
+      </div>
+
+      <div class="product-grid reveal delay-1" id="featuredGrid">
+        <!-- Rendered by JS -->
+      </div>
+
+      <div class="text-center mt-8 reveal delay-2">
+        <a href="produk.html" class="btn btn-primary btn-lg">Lihat Semua Produk →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       Produk Terbaru
+       ============================================ -->
+  <section class="section" id="terbaru">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-badge">🆕 Terbaru</span>
+        <h2>Produk <span class="text-gradient">Terbaru</span></h2>
+        <p>Produk-produk baru yang baru saja ditambahkan oleh penjual kami</p>
+      </div>
+
+      <div class="product-grid reveal delay-1" id="newProductsGrid">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       Tentang Kami
+       ============================================ -->
+  <section class="section" style="background: var(--bg-surface);" id="tentang">
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-image reveal">
+          🏘️
+        </div>
+        <div class="about-content reveal delay-1">
+          <span class="section-badge">🤝 Tentang Kami</span>
+          <h2>Paguyuban UMKM <span class="text-gradient">Cemilan Ciamis</span></h2>
+          <p>
+            Kami adalah komunitas ibu-ibu rumah tangga dari Desa Cikoneng, Ciamis yang bersatu
+            untuk memasarkan produk makanan ringan buatan rumah secara digital. Setiap produk
+            dibuat dengan resep turun-temurun dan bahan-bahan pilihan.
+          </p>
+          <p>
+            Melalui platform ini, kami ingin menjangkau lebih banyak penikmat cemilan di seluruh
+            Indonesia dan membantu meningkatkan kesejahteraan keluarga pengrajin lokal.
+          </p>
+
+          <div class="about-features">
+            <div class="about-feature">
+              <div class="feature-icon">🏡</div>
+              <div class="feature-text">
+                <h5>Buatan Rumah</h5>
+                <p>100% homemade, tanpa pabrik</p>
+              </div>
+            </div>
+            <div class="about-feature">
+              <div class="feature-icon">🌿</div>
+              <div class="feature-text">
+                <h5>Bahan Alami</h5>
+                <p>Tanpa pengawet & pewarna buatan</p>
+              </div>
+            </div>
+            <div class="about-feature">
+              <div class="feature-icon">💜</div>
+              <div class="feature-text">
+                <h5>Dibuat Dengan Cinta</h5>
+                <p>Setiap produk dibuat penuh kasih</p>
+              </div>
+            </div>
+            <div class="about-feature">
+              <div class="feature-icon">📦</div>
+              <div class="feature-text">
+                <h5>Kirim se-Indonesia</h5>
+                <p>Melayani pengiriman nasional</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       Penjual Kami
+       ============================================ -->
+  <section class="section" id="penjual">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-badge">👩‍🍳 Penjual</span>
+        <h2>Para Penjual <span class="text-gradient">Kami</span></h2>
+        <p>Kenali ibu-ibu hebat di balik setiap cemilan lezat yang kami tawarkan</p>
+      </div>
+
+      <div class="grid grid-3 reveal delay-1" id="sellersGrid">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       Cara Pesan (Brief)
+       ============================================ -->
+  <section class="section" style="background: var(--bg-surface);" id="cara-pesan">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-badge">📖 Panduan</span>
+        <h2>Cara <span class="text-gradient">Pesan</span></h2>
+        <p>Pesan cemilan favorit Anda hanya dalam beberapa langkah mudah</p>
+      </div>
+
+      <div class="steps-grid reveal delay-1">
+        <div class="step-card">
+          <div class="step-card__icon">🔍</div>
+          <h4>Pilih Produk</h4>
+          <p>Jelajahi katalog dan pilih cemilan yang Anda inginkan</p>
+        </div>
+        <div class="step-card">
+          <div class="step-card__icon">🛒</div>
+          <h4>Masukkan Keranjang</h4>
+          <p>Tambahkan produk ke keranjang, pilih variasi dan jumlah</p>
+        </div>
+        <div class="step-card">
+          <div class="step-card__icon">💬</div>
+          <h4>Kirim via WhatsApp</h4>
+          <p>Klik tombol WhatsApp, pesanan otomatis terkirim ke penjual</p>
+        </div>
+        <div class="step-card">
+          <div class="step-card__icon">🎉</div>
+          <h4>Terima Pesanan</h4>
+          <p>Konfirmasi pembayaran, dan cemilan akan dikirim ke Anda!</p>
+        </div>
+      </div>
+
+      <div class="text-center mt-8 reveal delay-2">
+        <a href="cara-pesan.html" class="btn btn-secondary btn-lg">Baca Panduan Lengkap →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       Footer
+       ============================================ -->
+  <footer class="footer" id="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="navbar-brand">
+            <img src="assets/images/logo.jpg" alt="Cemilan Ciamis" width="40" height="40">
+            <span>Cemilan Ciamis</span>
+          </a>
+          <p>Platform digital UMKM makanan ringan khas Ciamis. Dibuat dengan cinta oleh ibu-ibu pengrajin lokal dari Desa Cikoneng.</p>
+        </div>
+
+        <div class="footer-section">
+          <h5>Navigasi</h5>
+          <ul>
+            <li><a href="index.html">Beranda</a></li>
+            <li><a href="produk.html">Semua Produk</a></li>
+            <li><a href="cara-pesan.html">Cara Pesan</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h5>Kategori</h5>
+          <ul>
+            <li><a href="produk.html?kategori=keripik">Keripik & Kerupuk</a></li>
+            <li><a href="produk.html?kategori=kue-kering">Kue Kering</a></li>
+            <li><a href="produk.html?kategori=manisan">Manisan & Dodol</a></li>
+            <li><a href="produk.html?kategori=kacang">Kacang & Camilan</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h5>Kontak</h5>
+          <ul>
+            <li>📍 Desa Cikoneng, Ciamis</li>
+            <li>📱 Hubungi via WhatsApp</li>
+            <li>🕐 Setiap Hari, 08.00 - 20.00</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>© 2024 Cemilan Ciamis. Paguyuban UMKM Desa Cikoneng, Ciamis.</p>
+        <p>Dibuat dengan 💜 untuk UMKM Indonesia</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============================================
+       Cart Drawer
+       ============================================ -->
+  <div class="overlay cart-overlay" id="cartOverlay"></div>
+  <aside class="cart-drawer" id="cartDrawer">
+    <div class="cart-drawer__header">
+      <h3>🛒 Keranjang Belanja</h3>
+      <button class="cart-drawer__close btn btn-ghost btn-icon" aria-label="Tutup">✕</button>
+    </div>
+    <div class="cart-drawer__body" id="cartBody">
+      <!-- Rendered by JS -->
+    </div>
+    <div class="cart-drawer__footer" id="cartFooter">
+      <!-- Rendered by JS -->
+    </div>
+  </aside>
+
+  <!-- Toast container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    // ─── Homepage-specific rendering ───
+    document.addEventListener('DOMContentLoaded', async () => {
+      renderCategories();
+      
+      // Ambil produk langsung dari Supabase (Live Backend)
+      try {
+        const liveProducts = await getProductsFromSupabase();
+        if (liveProducts && liveProducts.length > 0) {
+          PRODUCTS = liveProducts;
+        }
+      } catch (err) {
+        console.warn('Menggunakan fallback data lokal:', err);
+      }
+
+      renderFeaturedProducts();
+      renderNewProducts();
+      renderSellers();
+    });
+
+    function renderCategories() {
+      const grid = document.getElementById('categoryGrid');
+      if (!grid) return;
+      grid.innerHTML = CATEGORIES.map(cat => `
+        <a href="produk.html?kategori=${cat.id}" class="category-card">
+          <div class="category-icon">${cat.icon}</div>
+          <span class="category-name">${cat.name}</span>
+        </a>
+      `).join('');
+    }
+
+    function renderFeaturedProducts() {
+      const grid = document.getElementById('featuredGrid');
+      if (!grid) return;
+      const featured = getFeaturedProducts();
+      grid.innerHTML = featured.map(p => renderProductCard(p)).join('');
+    }
+
+    function renderNewProducts() {
+      const grid = document.getElementById('newProductsGrid');
+      if (!grid) return;
+      const newProducts = PRODUCTS.filter(p => p.isNew && p.isActive);
+      if (newProducts.length === 0) {
+        grid.innerHTML = getNewProducts(4).map(p => renderProductCard(p)).join('');
+      } else {
+        grid.innerHTML = newProducts.map(p => renderProductCard(p)).join('');
+      }
+    }
+
+    function renderSellers() {
+      const grid = document.getElementById('sellersGrid');
+      if (!grid) return;
+      grid.innerHTML = SELLERS.map(s => renderSellerCard(s)).join('');
+    }
+  </script>
+</body>
+</html>
