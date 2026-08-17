@@ -175,3 +175,58 @@ async function uploadImageToSupabase(file, bucketName = 'products') {
     return { success: false, message: err.message };
   }
 }
+
+/**
+ * Mendaftarkan akun penjual baru ke Supabase Auth & Tabel Sellers
+ */
+async function registerSellerToSupabase(email, password, shopName, sellerName, whatsapp) {
+  if (!db) return { success: false, message: 'Supabase client belum dikonfigurasi.' };
+
+  try {
+    // 1. Register user di Supabase Auth
+    const { data: authData, error: authError } = await db.auth.signUp({
+      email: email,
+      password: password,
+      options: {
+        data: {
+          shop_name: shopName,
+          name: sellerName
+        }
+      }
+    });
+
+    if (authError) {
+      return { success: false, message: authError.message };
+    }
+
+    const userId = authData.user ? authData.user.id : null;
+    const sellerId = 'seller-' + Date.now();
+
+    // 2. Insert profil penjual ke tabel public.sellers
+    const { error: dbError } = await db
+      .from('sellers')
+      .insert([
+        {
+          id: sellerId,
+          user_id: userId,
+          name: sellerName,
+          shop_name: shopName,
+          whatsapp: whatsapp || '6281234567890',
+          avatar: '👩‍🍳',
+          village: 'Desa Cikoneng, Ciamis',
+          bio: 'Penjual UMKM Cemilan Ciamis.'
+        }
+      ]);
+
+    if (dbError) {
+      console.warn('Pendaftaran Auth berhasil, namun insert tabel sellers dibatasi RLS:', dbError);
+    }
+
+    return {
+      success: true,
+      message: 'Pendaftaran berhasil! Akun Anda telah tersimpan di Supabase Auth.'
+    };
+  } catch (err) {
+    return { success: false, message: err.message };
+  }
+}

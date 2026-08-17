@@ -70,6 +70,11 @@ CREATE POLICY "Public Read Sellers"
     ON public.sellers FOR SELECT 
     USING (true);
 
+-- Siapa saja (Pendaftar Baru) bisa mendaftarkan profil toko baru
+CREATE POLICY "Public Registration Insert Sellers"
+    ON public.sellers FOR INSERT
+    WITH CHECK (true);
+
 -- Penjual hanya bisa mengedit profil miliknya sendiri
 CREATE POLICY "Seller Update Own Profile" 
     ON public.sellers FOR UPDATE 
