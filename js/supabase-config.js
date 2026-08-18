@@ -265,14 +265,16 @@ async function loginSellerToSupabase(email, password) {
       return {
         success: true,
         message: 'Login berhasil dan profil otomatis dibuat.',
-        seller: newSeller
+        seller: newSeller,
+        role: isSuperAdmin ? 'super_admin' : 'seller'
       };
     }
 
     return {
       success: true,
       message: 'Login berhasil.',
-      seller: sellerData
+      seller: sellerData,
+      role: authData.user.email === 'superadmin@cemilanciamis.com' ? 'super_admin' : 'seller'
     };
   } catch (err) {
     return { success: false, message: err.message };
