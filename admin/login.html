@@ -26,15 +26,9 @@
         <div style="background: var(--gradient-primary); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem;">🛍️</div>
       </div>
       
-      <!-- AUTH TABS -->
-      <div class="auth-tabs">
-        <button class="auth-tab-btn active" id="tabLogin" type="button">Masuk</button>
-        <button class="auth-tab-btn" id="tabRegister" type="button">Daftar Akun</button>
-      </div>
-      
       <!-- 1. FORM LOGIN -->
       <div id="loginSection">
-        <h2>Panel Penjual</h2>
+        <h2>Panel Admin</h2>
         <p>Masuk dengan email Anda untuk mengelola platform</p>
 
         <form id="loginForm" style="text-align: left;">
@@ -53,39 +47,6 @@
 
           <button type="submit" id="btnLogin" class="btn btn-primary btn-block btn-lg mt-6">Masuk ke Panel</button>
         </form>
-      </div>
-
-      <!-- 2. FORM REGISTER -->
-      <div id="registerSection" class="hidden">
-        <h2>Daftar Akun Baru</h2>
-        <p>Bergabunglah menjadi penjual UMKM Cemilan Ciamis</p>
-
-        <form id="registerForm" style="text-align: left;">
-          <div class="form-group">
-            <label class="form-label" for="regShopName">Nama Toko</label>
-            <input type="text" class="form-input" id="regShopName" placeholder="Contoh: Keripik Bu Siti" required>
-          </div>
-          <div class="form-group mt-4">
-            <label class="form-label" for="regSellerName">Nama Lengkap Pemilik</label>
-            <input type="text" class="form-input" id="regSellerName" placeholder="Sesuai KTP" required>
-          </div>
-          <div class="form-group mt-4">
-            <label class="form-label" for="regEmail">Email</label>
-            <input type="email" class="form-input" id="regEmail" placeholder="email@contoh.com" required autocomplete="username">
-          </div>
-          <div class="form-group mt-4">
-            <label class="form-label" for="regWhatsapp">No. WhatsApp</label>
-            <input type="tel" class="form-input" id="regWhatsapp" placeholder="Contoh: 6281234567890" required>
-          </div>
-          <div class="form-group mt-4">
-            <label class="form-label" for="regPassword">Password</label>
-            <div class="password-wrapper">
-              <input type="password" class="form-input" id="regPassword" placeholder="Minimal 6 karakter" required autocomplete="new-password">
-              <button type="button" class="btn-toggle-password" id="btnToggleRegPassword">👁️</button>
-            </div>
-          </div>
-          <button type="submit" id="btnRegister" class="btn btn-primary btn-block btn-lg mt-6">Daftar Sekarang</button>
-        </form>
       </div>      <p id="errorMessage" class="form-error hidden mt-4" style="text-align: center;"></p>
       <div id="successMessage" class="success-box hidden mt-4" style="text-align: center;"></div>
     </div>
@@ -102,35 +63,9 @@
     const emailInput = document.getElementById('emailInput');
     const passwordInput = document.getElementById('passwordInput');
     const btnTogglePassword = document.getElementById('btnTogglePassword');
-    const btnToggleRegPassword = document.getElementById('btnToggleRegPassword');
-    const regPasswordInput = document.getElementById('regPassword');
     
     const errorMessage = document.getElementById('errorMessage');
     const successMessage = document.getElementById('successMessage');
-
-    const tabLogin = document.getElementById('tabLogin');
-    const tabRegister = document.getElementById('tabRegister');
-    const loginSection = document.getElementById('loginSection');
-    const registerSection = document.getElementById('registerSection');
-
-    // Tab Switching
-    tabLogin.addEventListener('click', () => {
-      tabLogin.classList.add('active');
-      tabRegister.classList.remove('active');
-      loginSection.classList.remove('hidden');
-      registerSection.classList.add('hidden');
-      hideError();
-      hideSuccess();
-    });
-
-    tabRegister.addEventListener('click', () => {
-      tabRegister.classList.add('active');
-      tabLogin.classList.remove('active');
-      registerSection.classList.remove('hidden');
-      loginSection.classList.add('hidden');
-      hideError();
-      hideSuccess();
-    });
 
     // Toggle Password Visibility
     btnTogglePassword.addEventListener('click', () => {
@@ -140,16 +75,6 @@
       } else {
         passwordInput.type = 'password';
         btnTogglePassword.textContent = '👁️';
-      }
-    });
-
-    btnToggleRegPassword.addEventListener('click', () => {
-      if (regPasswordInput.type === 'password') {
-        regPasswordInput.type = 'text';
-        btnToggleRegPassword.textContent = '🙈';
-      } else {
-        regPasswordInput.type = 'password';
-        btnToggleRegPassword.textContent = '👁️';
       }
     });
 
@@ -183,47 +108,7 @@
       }
     });
 
-    // Submit Handler Register
-    registerForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      hideError();
-      hideSuccess();
-      
-      const shopName = document.getElementById('regShopName').value.trim();
-      const sellerName = document.getElementById('regSellerName').value.trim();
-      const email = document.getElementById('regEmail').value.trim();
-      const whatsapp = document.getElementById('regWhatsapp').value.trim();
-      const password = regPasswordInput.value;
 
-      if (password.length < 6) {
-        showError('Password minimal 6 karakter.');
-        return;
-      }
-
-      const btn = document.getElementById('btnRegister');
-      const originalText = btn ? btn.textContent : 'Daftar Sekarang';
-      if (btn) {
-        btn.disabled = true;
-        btn.textContent = '⏳ Menyimpan...';
-      }
-
-      // Supabase Register
-      const authResult = await registerSellerToSupabase(email, password, shopName, sellerName, whatsapp);
-      
-      if (btn) {
-        btn.disabled = false;
-        btn.textContent = originalText;
-      }
-
-      if (authResult.success) {
-        showSuccess(authResult.message);
-        registerForm.reset();
-        // Switch back to login tab after success
-        setTimeout(() => tabLogin.click(), 3000);
-      } else {
-        showError(authResult.message || 'Gagal mendaftar.');
-      }
-    });
 
     function completeLogin(authResult) {
       try {
