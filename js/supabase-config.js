@@ -378,3 +378,52 @@ async function logoutSeller() {
   localStorage.removeItem('adminLoggedIn');
 }
 
+/**
+ * Kategori API
+ */
+
+async function fetchCategories() {
+  if (!db) return { success: false, message: 'Supabase client belum dikonfigurasi.', data: [] };
+  
+  try {
+    const { data, error } = await db
+      .from('categories')
+      .select('*')
+      .order('display_order', { ascending: true })
+      .order('created_at', { ascending: true });
+      
+    if (error) throw error;
+    return { success: true, data: data };
+  } catch (err) {
+    return { success: false, message: err.message, data: [] };
+  }
+}
+
+async function addCategory(id, name, icon) {
+  if (!db) return { success: false, message: 'Supabase client belum dikonfigurasi.' };
+  
+  try {
+    const { error } = await db.from('categories').insert([{
+      id: id,
+      name: name,
+      icon: icon
+    }]);
+    
+    if (error) throw error;
+    return { success: true, message: 'Kategori berhasil ditambahkan.' };
+  } catch (err) {
+    return { success: false, message: err.message };
+  }
+}
+
+async function deleteCategory(id) {
+  if (!db) return { success: false, message: 'Supabase client belum dikonfigurasi.' };
+  
+  try {
+    const { error } = await db.from('categories').delete().eq('id', id);
+    if (error) throw error;
+    return { success: true, message: 'Kategori berhasil dihapus.' };
+  } catch (err) {
+    return { success: false, message: err.message };
+  }
+}
