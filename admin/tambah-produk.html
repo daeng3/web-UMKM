@@ -132,16 +132,31 @@
     const role = localStorage.getItem('adminRole') || 'seller';
     const currentSellerId = localStorage.getItem('adminSellerId') || 'bu-siti';
     
-    // Populate categories
+    // Populate categories dynamically from Supabase
     const catSelect = document.getElementById('inputCategory');
     let uploadedProductImageUrl = null;
 
-    CATEGORIES.forEach(c => {
-      const opt = document.createElement('option');
-      opt.value = c.id;
-      opt.textContent = c.icon + ' ' + c.name;
-      catSelect.appendChild(opt);
-    });
+    async function loadCategories() {
+      const res = await fetchCategories();
+      const categories = res.success ? res.data : CATEGORIES; // fallback to local data if fails
+      
+      catSelect.innerHTML = '<option value="" disabled selected>Pilih Kategori...</option>'; // reset
+      categories.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.id;
+        opt.textContent = (c.icon || '📦') + ' ' + c.name;
+        catSelect.appendChild(opt);
+      });
+
+      // Jika edit mode, set kategori yang sudah dipilih sebelumnya
+      if (editId && typeof getProductById !== 'undefined') {
+        const product = getProductById(editId);
+        if (product) {
+          catSelect.value = product.category || product.category_id;
+        }
+      }
+    }
+    loadCategories();
 
     // Populate seller select if Super Admin
     const sellerSelectGroup = document.getElementById('sellerSelectGroup');

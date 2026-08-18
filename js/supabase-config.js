@@ -253,7 +253,7 @@ async function loginSellerToSupabase(email, password) {
         bio: isSuperAdmin ? 'Akun pengelola utama platform Cemilan Ciamis.' : 'Penjual UMKM Cemilan Ciamis.'
       };
 
-      const { error: insertErr } = await db.from('sellers').insert([newSeller]);
+      const { error: insertErr } = await db.from('sellers').upsert([newSeller]);
       
       if (insertErr) {
         return { 

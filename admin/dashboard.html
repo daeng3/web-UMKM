@@ -52,6 +52,9 @@
       <a href="kelola-penjual.html" class="quick-action-btn" id="btnKelolaPenjual" style="display: none; flex: 1; min-width: 200px; background: var(--warning-50); border-color: var(--warning-300); color: var(--warning-900);">
         <span class="icon">👥</span> Kelola Akun Penjual
       </a>
+      <a href="kategori.html" class="quick-action-btn" id="btnKelolaKategori" style="display: none; flex: 1; min-width: 200px; background: var(--success-50); border-color: var(--success-300); color: var(--success-900);">
+        <span class="icon">📂</span> Kelola Kategori
+      </a>
     </div>
 
     <!-- Chart Section -->
@@ -89,6 +92,10 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         <span>Penjual</span>
       </a>
+      <a href="kategori.html" class="bottom-nav__item" id="navKategoriTab" style="display: none;">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+        <span>Kategori</span>
+      </a>
       <a href="profil.html" class="bottom-nav__item">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
         <span>Profil</span>
@@ -115,7 +122,9 @@
     if (role === 'super_admin') {
       document.getElementById('topbarSellerName').textContent = "👑 Super Admin Paguyuban (Semua Toko)";
       document.getElementById('navSellerTab').style.display = 'flex';
+      document.getElementById('navKategoriTab').style.display = 'flex';
       document.getElementById('btnKelolaPenjual').style.display = 'flex';
+      document.getElementById('btnKelolaKategori').style.display = 'flex';
       products = PRODUCTS;
     } else {
       const seller = getSellerById(sellerId);
