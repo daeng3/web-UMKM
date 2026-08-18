@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Setup Super Admin</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body style="padding: 50px; text-align: center;">
+  <h2>Setup Super Admin via API Supabase</h2>
+  <p>Klik tombol di bawah ini untuk membuat akun superadmin secara aman menggunakan API resmi Supabase. Ini akan mencegah error skema database pada proses autentikasi.</p>
+  
+  <button id="btnSetup" class="btn btn-primary" style="padding: 10px 20px; font-size: 16px;">Buat Akun Superadmin</button>
+  
+  <p id="status" style="margin-top: 20px; font-weight: bold;"></p>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase-config.js"></script>
+  <script>
+    document.getElementById('btnSetup').addEventListener('click', async () => {
+      const statusText = document.getElementById('status');
+      statusText.textContent = 'Memproses...';
+      statusText.style.color = 'black';
+      
+      try {
+        // 1. Sign up user
+        const { data: authData, error: authError } = await db.auth.signUp({
+          email: 'superadmin@cemilanciamis.com',
+          password: 'admin123',
+          options: {
+            data: {
+              name: 'Super Admin',
+              shop_name: 'Super Admin'
+            }
+          }
+        });
+
+        if (authError) {
+          if (authError.message.includes('already registered')) {
+            statusText.innerHTML = '<span style="color:red">Error: Email sudah terdaftar. Silakan hapus user terlebih dahulu di Dasbor Supabase (Menu Authentication -> Users).</span>';
+            return;
+          }
+          throw authError;
+        }
+
+        const userId = authData.user.id;
+
+        // 2. Insert into sellers table to prevent dashboard errors
+        const { error: dbError } = await db.from('sellers').upsert({
+          id: 'super-admin',
+          user_id: userId,
+          name: 'Admin Paguyuban',
+          shop_name: 'Super Admin',
+          avatar: '👑',
+          whatsapp: '6281234567890',
+          bio: 'Akun pengelola utama platform Cemilan Ciamis.'
+        });
+
+        if (dbError) throw dbError;
+
+        statusText.innerHTML = '<span style="color:green">Berhasil! Akun Superadmin (superadmin@cemilanciamis.com / admin123) telah dibuat. Anda sekarang bisa kembali ke halaman Login. File ini (admin/setup.html) boleh Anda hapus setelahnya.</span>';
+        
+      } catch (err) {
+        statusText.innerHTML = `<span style="color:red">Error: ${err.message}</span>`;
+      }
+    });
+  </script>
+</body>
+</html>
