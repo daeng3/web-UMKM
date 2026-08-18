@@ -403,7 +403,7 @@ async function addCategory(id, name, icon) {
   if (!db) return { success: false, message: 'Supabase client belum dikonfigurasi.' };
   
   try {
-    const { error } = await db.from('categories').insert([{
+    const { error } = await db.from('categories').upsert([{
       id: id,
       name: name,
       icon: icon
