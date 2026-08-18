@@ -151,7 +151,8 @@
     </div>
   </nav>
 
-  <script src="../js/data.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase-config.js"></script>
   <script>
     // Cek Otorisasi Super Admin
     if (localStorage.getItem('adminLoggedIn') !== 'true' || localStorage.getItem('adminRole') !== 'super_admin') {
@@ -163,34 +164,41 @@
     const sellerCountBadge = document.getElementById('sellerCountBadge');
     const createSellerForm = document.getElementById('createSellerForm');
 
-    function renderSellers() {
-      sellerCountBadge.textContent = SELLERS.length;
-      if (SELLERS.length === 0) {
+    async function renderSellers() {
+      sellersList.innerHTML = '<p style="text-align:center; padding: 2rem;">⏳ Memuat daftar penjual...</p>';
+      
+      const res = await fetchAllSellers();
+      if (!res.success) {
+        sellersList.innerHTML = `<p style="text-align:center; color: var(--danger-600); padding: 2rem;">Gagal memuat: ${res.message}</p>`;
+        return;
+      }
+      
+      const sellers = res.data;
+      sellerCountBadge.textContent = sellers.length;
+      
+      if (sellers.length === 0) {
         sellersList.innerHTML = '<p style="text-align:center; color: var(--text-muted); padding: 2rem;">Belum ada akun penjual terdaftar.</p>';
         return;
       }
 
-      sellersList.innerHTML = SELLERS.map(s => {
-        const prodCount = PRODUCTS.filter(p => p.sellerId === s.id).length;
-        const statusBadge = s.mustChangePassword ? 
-          `<span class="badge-status temp" title="Penjual wajib ganti sandi saat login">🔒 Sandi Sementara</span>` : 
-          `<span class="badge-status secure">✅ Sandi Pribadi</span>`;
-
+      sellersList.innerHTML = sellers.map(s => {
+        // Tampilkan username/email hasil generate jika ada
+        const userEmail = s.user_id ? 'Terkoneksi' : 'Belum konek';
         return `
           <div class="seller-admin-card animate-fade-in-up">
             <div class="seller-admin-card__top">
               <div class="seller-admin-card__avatar">${s.avatar || '👩‍🍳'}</div>
               <div class="seller-admin-card__info">
-                <h4>${s.shopName} ${statusBadge}</h4>
-                <p>Pemilik: <b>${s.name}</b> | Username: <code>${s.username}</code></p>
-                <p>WA: 0${s.whatsapp.startsWith('62') ? s.whatsapp.slice(2) : s.whatsapp} • ${prodCount} Produk</p>
+                <h4>${s.shop_name} <span class="badge-status secure">✅ Aktif</span></h4>
+                <p>Pemilik: <b>${s.name}</b></p>
+                <p>WA: 0${s.whatsapp.startsWith('62') ? s.whatsapp.slice(2) : s.whatsapp}</p>
               </div>
             </div>
             <div class="seller-admin-card__actions">
-              <button class="btn btn-ghost btn-sm" style="flex: 1; color: var(--warning-700);" onclick="handleResetPassword('${s.id}', '${s.shopName}')">
-                🔑 Reset Sandi
+              <button class="btn btn-ghost btn-sm" style="flex: 1; color: var(--warning-700);" onclick="alert('Mereset sandi dari admin panel tidak dapat dilakukan untuk alasan keamanan (aturan Supabase). Minta penjual untuk klik Lupa Password di halaman Login.')">
+                🔑 Info Sandi
               </button>
-              <button class="btn btn-ghost btn-sm" style="flex: 1; color: var(--danger-600);" onclick="handleDeleteSeller('${s.id}', '${s.shopName}')">
+              <button class="btn btn-ghost btn-sm" style="flex: 1; color: var(--danger-600);" onclick="alert('Untuk menghapus akun sepenuhnya, Anda harus menghapusnya dari dashboard Supabase (Tabel Auth).')">
                 🗑️ Hapus Akun
               </button>
             </div>
@@ -199,8 +207,14 @@
       }).join('');
     }
 
-    createSellerForm.addEventListener('submit', (e) => {
+    createSellerForm.addEventListener('submit', async (e) => {
       e.preventDefault();
+      
+      const btn = createSellerForm.querySelector('button[type="submit"]');
+      const origText = btn.textContent;
+      btn.textContent = '⏳ Membuat...';
+      btn.disabled = true;
+
       const newSellerData = {
         shopName: document.getElementById('newShopName').value,
         name: document.getElementById('newOwnerName').value,
@@ -212,47 +226,23 @@
         avatar: '👩‍🍳'
       };
 
-      const res = createSellerByAdmin(newSellerData);
+      const res = await adminCreateSeller(newSellerData);
+      
+      btn.textContent = origText;
+      btn.disabled = false;
+
       if (res.success) {
-        alert(`Berhasil membuat akun untuk toko "${newSellerData.shopName}"!\nUsername: ${newSellerData.username}\nSandi Sementara: ${newSellerData.password}`);
+        alert(`🎉 Berhasil membuat akun untuk toko "${newSellerData.shopName}"!\n\nPENTING!\nSuruh penjual login menggunakan Email ini:\n📧 Email: ${res.email}\n🔑 Sandi: ${newSellerData.password}`);
         createSellerForm.reset();
         document.getElementById('newPassword').value = 'Ciamis123';
         document.getElementById('newVillage').value = 'Desa Cikoneng, Ciamis';
         renderSellers();
       } else {
-        alert('Gagal membuat akun: ' + res.message);
+        alert('❌ Gagal membuat akun: ' + res.message);
       }
     });
 
-    function handleResetPassword(sellerId, shopName) {
-      const tempPass = prompt(`Masukkan kata sandi sementara baru untuk toko "${shopName}":`, 'CiamisBaru123');
-      if (tempPass !== null && tempPass.trim().length >= 6) {
-        const res = resetSellerPasswordByAdmin(sellerId, tempPass.trim());
-        if (res.success) {
-          alert(`Sandi untuk "${shopName}" berhasil direset ke "${tempPass.trim()}". Penjual diwajibkan mengganti sandi saat login berikutnya.`);
-          renderSellers();
-        } else {
-          alert('Gagal mereset sandi.');
-        }
-      } else if (tempPass !== null) {
-        alert('Sandi sementara minimal 6 karakter!');
-      }
-    }
-
-    function handleDeleteSeller(sellerId, shopName) {
-      if (confirm(`⚠️ PERINGATAN:\nApakah Anda yakin ingin menghapus akun toko "${shopName}"?\nAkun yang dihapus tidak dapat dipulihkan kembali!`)) {
-        const res = deleteSellerByAdmin(sellerId);
-        if (res.success) {
-          alert(`Toko "${shopName}" berhasil dihapus.`);
-          renderSellers();
-        } else {
-          alert('Gagal menghapus toko.');
-        }
-      }
-    }
-
     document.addEventListener('DOMContentLoaded', renderSellers);
-      });
   </script>
 </body>
 </html>

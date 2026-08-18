@@ -427,3 +427,65 @@ async function deleteCategory(id) {
     return { success: false, message: err.message };
   }
 }
+
+/**
+ * Super Admin: API Penjual
+ */
+async function fetchAllSellers() {
+  if (!db) return { success: false, message: 'Supabase tidak tersedia', data: [] };
+  
+  try {
+    const { data, error } = await db.from('sellers').select('*').order('joined_at', { ascending: false });
+    if (error) throw error;
+    return { success: true, data: data };
+  } catch (err) {
+    return { success: false, message: err.message, data: [] };
+  }
+}
+
+async function adminCreateSeller(sellerData) {
+  if (!db) return { success: false, message: 'Supabase tidak tersedia' };
+  
+  try {
+    // 1. Buat temporary client tanpa persistensi agar sesi admin tidak tertimpa
+    const tempDb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: { persistSession: false, autoRefreshToken: false }
+    });
+    
+    // 2. Konversi username menjadi email internal
+    const generatedEmail = `${sellerData.username.trim().toLowerCase()}@cemilanciamis.com`;
+    
+    // 3. Daftarkan di Auth
+    const { data: authData, error: authError } = await tempDb.auth.signUp({
+      email: generatedEmail,
+      password: sellerData.password,
+      options: {
+        data: {
+          name: sellerData.name,
+          shop_name: sellerData.shopName
+        }
+      }
+    });
+    
+    if (authError) throw authError;
+    
+    // 4. Buat profil di public.sellers
+    const newSellerId = 'seller-' + Date.now();
+    const { error: dbError } = await db.from('sellers').insert([{
+      id: newSellerId,
+      user_id: authData.user.id,
+      name: sellerData.name,
+      shop_name: sellerData.shopName,
+      whatsapp: sellerData.whatsapp,
+      village: sellerData.village,
+      bio: sellerData.bio,
+      avatar: sellerData.avatar || '👩‍🍳'
+    }]);
+    
+    if (dbError) throw dbError;
+    
+    return { success: true, email: generatedEmail };
+  } catch (err) {
+    return { success: false, message: err.message };
+  }
+}
