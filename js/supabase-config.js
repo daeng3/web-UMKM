@@ -239,17 +239,18 @@ async function loginSellerToSupabase(email, password) {
     if (dbError || !sellerData) {
       console.warn('Profil seller belum ada, membuat otomatis...', dbError);
       
-      const sellerId = 'seller-' + Date.now();
+      const isSuperAdmin = authData.user.email === 'superadmin@cemilanciamis.com';
+      const sellerId = isSuperAdmin ? 'super-admin' : ('seller-' + Date.now());
       const meta = authData.user.user_metadata || {};
       const newSeller = {
         id: sellerId,
         user_id: userId,
-        name: meta.name || 'Penjual Baru',
-        shop_name: meta.shop_name || 'Toko Baru',
+        name: isSuperAdmin ? 'Admin Paguyuban' : (meta.name || 'Penjual Baru'),
+        shop_name: isSuperAdmin ? 'Super Admin' : (meta.shop_name || 'Toko Baru'),
         whatsapp: '6281234567890',
-        avatar: '👩‍🍳',
-        village: 'Desa Cikoneng, Ciamis',
-        bio: 'Penjual UMKM Cemilan Ciamis.'
+        avatar: isSuperAdmin ? '👑' : '👩‍🍳',
+        village: isSuperAdmin ? 'Pusat' : 'Desa Cikoneng, Ciamis',
+        bio: isSuperAdmin ? 'Akun pengelola utama platform Cemilan Ciamis.' : 'Penjual UMKM Cemilan Ciamis.'
       };
 
       const { error: insertErr } = await db.from('sellers').insert([newSeller]);

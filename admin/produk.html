@@ -80,7 +80,7 @@
         return;
       }
       const sellerId = auth.seller ? auth.seller.id : null;
-      const role = 'seller'; // Simplification for production MVP
+      const role = sellerId === 'super-admin' ? 'super_admin' : 'seller';
     
     let productToDelete = null;
 

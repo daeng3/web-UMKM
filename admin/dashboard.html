@@ -109,9 +109,7 @@
       }
 
       const sellerId = auth.seller ? auth.seller.id : null;
-      // Admin role logic is simplified. Since this is an MVP, we just use seller role.
-      // Super admin can be manually defined later via database.
-      const role = 'seller'; 
+      const role = sellerId === 'super-admin' ? 'super_admin' : 'seller'; 
       let products = [];
 
     if (role === 'super_admin') {
