@@ -232,7 +232,7 @@
       btn.disabled = false;
 
       if (res.success) {
-        alert(`🎉 Berhasil membuat akun untuk toko "${newSellerData.shopName}"!\n\nPENTING!\nSuruh penjual login menggunakan Email ini:\n📧 Email: ${res.email}\n🔑 Sandi: ${newSellerData.password}`);
+        alert(`🎉 Berhasil membuat akun untuk toko "${newSellerData.shopName}"!\n\nPENTING!\nSuruh penjual login menggunakan Username ini:\n👤 Username: ${res.username}\n🔑 Sandi: ${newSellerData.password}`);
         createSellerForm.reset();
         document.getElementById('newPassword').value = 'Ciamis123';
         document.getElementById('newVillage').value = 'Desa Cikoneng, Ciamis';

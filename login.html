@@ -39,8 +39,8 @@
 
         <form id="loginForm" style="text-align: left;">
           <div class="form-group">
-            <label class="form-label" for="usernameInput">Email Terdaftar</label>
-            <input type="email" class="form-input" id="usernameInput" placeholder="Contoh: toko@gmail.com" required autocomplete="username">
+            <label class="form-label" for="usernameInput">Username</label>
+            <input type="text" class="form-input" id="usernameInput" placeholder="Contoh: toko123" required autocomplete="username">
           </div>
 
           <div class="form-group mt-4">
@@ -72,8 +72,8 @@
           </div>
 
           <div class="form-group mt-3">
-            <label class="form-label" for="regEmailInput">Email Aktif</label>
-            <input type="email" class="form-input" id="regEmailInput" placeholder="Contoh: cicih@gmail.com" required>
+            <label class="form-label" for="regEmailInput">Username (Tanpa Spasi)</label>
+            <input type="text" class="form-input" id="regEmailInput" placeholder="Contoh: toko123" required>
           </div>
 
           <div class="form-group mt-3">
@@ -169,7 +169,7 @@
     loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       hideError();
-      const email = usernameInput.value.trim();
+      const username = usernameInput.value.trim();
       const password = passwordInput.value;
 
       const btn = document.getElementById('btnLogin');
@@ -179,7 +179,7 @@
         btn.textContent = '⏳ Memproses...';
       }
 
-      const authResult = await loginSellerToSupabase(email, password);
+      const authResult = await loginSellerToSupabase(username, password);
       
       if (btn) {
         btn.disabled = false;
@@ -189,7 +189,7 @@
       if (authResult.success) {
         completeLogin(authResult);
       } else {
-        showError(authResult.message || 'Email atau password salah.');
+        showError(authResult.message || 'Username atau password salah.');
       }
     });
 
@@ -205,11 +205,11 @@
 
       const sellerName = document.getElementById('regNameInput').value.trim();
       const shopName = document.getElementById('regShopInput').value.trim();
-      const email = document.getElementById('regEmailInput').value.trim();
+      const username = document.getElementById('regEmailInput').value.trim();
       const whatsapp = document.getElementById('regWaInput').value.trim();
       const password = document.getElementById('regPassInput').value.trim();
 
-      const res = await registerSellerToSupabase(email, password, shopName, sellerName, whatsapp);
+      const res = await registerSellerToSupabase(username, password, shopName, sellerName, whatsapp);
       btn.disabled = false;
       btn.textContent = '✨ Daftar Akun Toko Supabase';
 

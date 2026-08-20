@@ -179,10 +179,13 @@ async function uploadImageToSupabase(file, bucketName = 'products') {
 /**
  * Mendaftarkan akun penjual baru ke Supabase Auth & Tabel Sellers
  */
-async function registerSellerToSupabase(email, password, shopName, sellerName, whatsapp) {
+async function registerSellerToSupabase(username, password, shopName, sellerName, whatsapp) {
   if (!db) return { success: false, message: 'Supabase client belum dikonfigurasi.' };
 
   try {
+    const safeUsername = username.trim().toLowerCase().split('@')[0].replace(/[^a-z0-9_]/g, '');
+    const email = `${safeUsername}@umkmpanjalu.web.id`;
+
     // 1. Register user di Supabase Auth
     const { data: authData, error: authError } = await db.auth.signUp({
       email: email,
@@ -214,10 +217,14 @@ async function registerSellerToSupabase(email, password, shopName, sellerName, w
 /**
  * Login akun penjual ke Supabase Auth
  */
-async function loginSellerToSupabase(email, password) {
+async function loginSellerToSupabase(username, password) {
   if (!db) return { success: false, message: 'Supabase client belum dikonfigurasi.' };
 
   try {
+    const rawUsername = username.trim().toLowerCase();
+    const safeUsername = rawUsername.split('@')[0].replace(/[^a-z0-9_]/g, '');
+    const email = rawUsername === 'superadmin' ? 'superadmin@cemilanciamis.com' : `${safeUsername}@umkmpanjalu.web.id`;
+
     const { data: authData, error: authError } = await db.auth.signInWithPassword({
       email: email,
       password: password
@@ -454,8 +461,10 @@ async function adminCreateSeller(sellerData) {
       auth: { persistSession: false, autoRefreshToken: false }
     });
     
-    // 2. Konversi username menjadi email internal
-    const generatedEmail = `${sellerData.username.trim().toLowerCase()}@cemilanciamis.com`;
+    // 2. Konversi username menjadi email internal (menggunakan domain asli agar lolos validasi Supabase)
+    const rawUsername = sellerData.username.trim().toLowerCase().split('@')[0];
+    const safeUsername = rawUsername.replace(/[^a-z0-9_]/g, '');
+    const generatedEmail = `${safeUsername}@umkmpanjalu.web.id`;
     
     // 3. Daftarkan di Auth
     const { data: authData, error: authError } = await tempDb.auth.signUp({
@@ -486,7 +495,7 @@ async function adminCreateSeller(sellerData) {
     
     if (dbError) throw dbError;
     
-    return { success: true, email: generatedEmail };
+    return { success: true, username: safeUsername };
   } catch (err) {
     return { success: false, message: err.message };
   }
