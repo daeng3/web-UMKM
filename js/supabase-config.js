@@ -223,7 +223,7 @@ async function loginSellerToSupabase(username, password) {
   try {
     const rawUsername = username.trim().toLowerCase();
     const safeUsername = rawUsername.split('@')[0].replace(/[^a-z0-9_]/g, '');
-    const email = rawUsername === 'superadmin' ? 'superadmin@cemilanciamis.com' : `${safeUsername}@umkmpanjalu.web.id`;
+    const email = rawUsername === 'adminutama' ? 'adminutama@cemilanciamis.com' : `${safeUsername}@umkmpanjalu.web.id`;
 
     const { data: authData, error: authError } = await db.auth.signInWithPassword({
       email: email,
@@ -246,7 +246,7 @@ async function loginSellerToSupabase(username, password) {
     if (dbError || !sellerData) {
       console.warn('Profil seller belum ada, membuat otomatis...', dbError);
       
-      const isSuperAdmin = authData.user.email === 'superadmin@cemilanciamis.com';
+      const isSuperAdmin = authData.user.email === 'adminutama@cemilanciamis.com';
       const sellerId = isSuperAdmin ? 'super-admin' : ('seller-' + Date.now());
       const meta = authData.user.user_metadata || {};
       const newSeller = {
@@ -281,7 +281,7 @@ async function loginSellerToSupabase(username, password) {
       success: true,
       message: 'Login berhasil.',
       seller: sellerData,
-      role: authData.user.email === 'superadmin@cemilanciamis.com' ? 'super_admin' : 'seller'
+      role: authData.user.email === 'adminutama@cemilanciamis.com' ? 'super_admin' : 'seller'
     };
   } catch (err) {
     return { success: false, message: err.message };

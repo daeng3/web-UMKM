@@ -13,8 +13,8 @@ const CATEGORIES = [
 
 const SUPER_ADMIN_ACCOUNT = {
   id: 'super-admin',
-  username: 'superadmin',
-  password: 'admin123', // Kredensial default admin paguyuban (wajib diganti di production)
+  username: 'adminutama',
+  password: 'adminutama123', // Kredensial default admin paguyuban (wajib diganti di production)
   name: 'Admin Paguyuban UMKM',
   role: 'super_admin',
   mustChangePassword: false,
@@ -551,7 +551,7 @@ function createSellerByAdmin(newSellerData) {
   if (!u || !newSellerData.password || !newSellerData.name || !newSellerData.shopName) {
     return { success: false, message: 'Data akun tidak lengkap.' };
   }
-  if (u === 'superadmin' || SELLERS.some(s => s.username === u)) {
+  if (u === 'adminutama' || SELLERS.some(s => s.username === u)) {
     return { success: false, message: 'Username sudah digunakan oleh akun lain.' };
   }
 
