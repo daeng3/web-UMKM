@@ -423,15 +423,8 @@
     document.addEventListener('DOMContentLoaded', async () => {
       renderCategories();
 
-      // Ambil produk langsung dari Supabase (Live Backend)
-      try {
-        const liveProducts = await getProductsFromSupabase();
-        if (liveProducts && liveProducts.length > 0) {
-          PRODUCTS = liveProducts;
-        }
-      } catch (err) {
-        console.warn('Menggunakan fallback data lokal:', err);
-      }
+      // Ambil produk dan penjual langsung dari Supabase (Live Backend)
+      await initGlobalData();
 
       renderFeaturedProducts();
       renderNewProducts();

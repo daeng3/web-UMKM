@@ -187,15 +187,8 @@
         currentCategory = urlParams.get('kategori');
       }
 
-      // Ambil data produk live dari Supabase jika ada
-      try {
-        const liveProducts = await getProductsFromSupabase();
-        if (liveProducts && liveProducts.length > 0) {
-          PRODUCTS = liveProducts;
-        }
-      } catch (err) {
-        console.warn('Menggunakan fallback data lokal:', err);
-      }
+      // Ambil produk dan penjual live dari Supabase
+      await initGlobalData();
 
       renderFilterChips();
       setupEventListeners();
